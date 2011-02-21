@@ -131,6 +131,8 @@ function getsubtotals() {
         $_SESSION['NBdisc'] = 0;
         $_SESSION['memID'] = 0;
 
+	$_SESSION['CardFeeTotal'] = 0;
+
         setglobalflags(0);
     }
     else {

@@ -188,6 +188,19 @@ function addtax() {
     addItem("TAX", "Tax", "A", "", "", 0, 0, 0, 0, $_SESSION["taxTotal"], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '');
 }
 
+// add 2% credit card fee
+function addCardCharge() {
+	if ($_SESSION["ttlflag"] == 0) {
+		boxMsg("transaction must be totaled before card fee can be added.");
+	} else {
+		$_SESSION["CardFeeTotal"] = $_SESSION["amtdue"] * 0.02;
+		addItem("CardFee", "Card Fee", "A", "", "", 0, 0, 0, 0, $_SESSION["CardFeeTotal"], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '');
+		// re-total, show it
+		ttl();
+		lastpage();
+	}
+}
+
 //---------------------------------- insert tender line item -----------------------------------
 function addtender($strtenderdesc, $strtendercode, $dbltendered) {
     addItem("", $strtenderdesc, "T", $strtendercode, "", 0, 0, 0, 0, $dbltendered, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '');

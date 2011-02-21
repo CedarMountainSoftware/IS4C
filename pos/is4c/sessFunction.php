@@ -12,6 +12,7 @@ function sessionReset(){
     $_SESSION["End"] = 0;
     $_SESSION["refund"] = 0;
     $_SESSION["foodstamptotal"] = 0;
+    $_SESSION['CardFeeTotal'] = 0;
 
     $_SESSION["fntlflag"] = 0;
     $_SESSION["fstaxable"] = 0;

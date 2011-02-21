@@ -193,6 +193,9 @@ function tender($right, $strl) {
     elseif ((($right == "CC" || $right == "TB") && $strl/100 > ($_SESSION["amtdue"] + 0.005)) && $_SESSION["refundTotal"] == 0) {
         xboxMsg("credit card tender cannot exceed purchase amount");
     }
+	elseif (($right == "CC" || $right == "TB") && ! $_SESSION["CardFeeTotal"] > 0) {
+		xboxMsg("card payment requires adding card fee. (CRD)");
+	}
     elseif ((($right == "FS") && $strl/100 > ($_SESSION["fsEligible"] + 0.005)) && $_SESSION["refundTotal"] == 0) {
         xboxMsg("EBT food tender cannot exceed eligible amount");
     }

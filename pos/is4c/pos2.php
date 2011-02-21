@@ -187,6 +187,9 @@ if (!function_exists("drawerKick")) include_once("printLib.php");
         // meant to be Member Discount. The key does not exist as yet
         $entered = "10DA";
     }
+    elseif ($entered == "CRD") {
+		$entered = "CRD";
+    }
     elseif (strstr($entered, "DT")) {
         // Case discount
         $dt = explode("DT", $entered);
@@ -303,6 +306,8 @@ if (!function_exists("drawerKick")) include_once("printLib.php");
         elseif($entered == "TETL") {
             addTaxExempt();
             lastpage();
+        } elseif ($entered == "CRD") {
+            addCardCharge();
         }
         elseif ($entered == "FTTL") {
             finalttl();
