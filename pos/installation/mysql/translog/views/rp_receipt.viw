@@ -12,13 +12,13 @@ trans_no,
 case 
 	when trans_type = 'T'
 		then 	concat(right( concat(space(44), upper(rtrim(Description)) ), 44) 
-			, right(concat( space(8), (-1 * Total)), 8) 
+			, right(concat( space(8), format((-1 * Total),2)), 8) 
 			, right(concat(space(4), status), 4))
 	when voided = 3 
 		then 	concat(left(concat(Description, space(30)), 30) 
 			, space(9) 
 			, 'TOTAL' 
-			, right(concat(space(8), UnitPrice), 8))
+			, right(concat(space(8), format(UnitPrice,2)), 8))
 	when voided = 2
 		then 	description
 	when voided = 4
@@ -28,14 +28,14 @@ case
 	when voided = 7 or voided = 17
 		then 	concat(left(concat(Description, space(30)), 30) 
 			, space(14) 
-			, right(concat(space(8), UnitPrice), 8) 
+			, right(concat(space(8), format(UnitPrice,2)), 8) 
 			, right(concat(space(4), status), 4))
 
 	else
 		concat(left(concat(Description, space(30)), 30)
 		, ' ' 
 		, left(concat(Comment, space(13)), 13) 
-		, right(concat(space(8), Total), 8) 
+		, right(concat(space(8), format(Total,2)), 8) 
 		, right(concat(space(4), status), 4))
 
 end
