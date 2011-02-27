@@ -65,15 +65,17 @@ function printfooter() {
 
     echo "</table></td></tr></table>";
     echo "<table border='0' cellspacing='0' cellpadding='0'>";
-    echo "<tr><td width='119' bgcolor='white' align='left'><font face='arial' color='black' size='-1'><b>" . $labelyousaved . "</b></font></td>";
-    echo "<td width='117' bgcolor='white' align='center'><font face='arial' color='#004080' size='-1'><b>" . $strpercentdisclabel . "</b></font></td>";
-    echo "<td width='117' bgcolor='white' align='center'><font face='arial' color='#004080' size='-1'><b>Mbr Special</b></font></td>";
+
+	echo "<tr><td width='119' bgcolor='white' align='left'>" . 
+		($_SESSION['no_discount_info']?'':"<font face='arial' color='black' size='-1'><b>" . $labelyousaved . "</b></font>") . 
+		"</td>";
+    echo "<td width='117' bgcolor='white' align='center'>" . ($_SESSION['no_discount_info']?'':"<font face='arial' color='#004080' size='-1'><b>" . $strpercentdisclabel . "</b></font>")."</td>";
+    echo "<td width='117' bgcolor='white' align='center'>" . ($_SESSION['no_discount_info']?'':" <font face='arial' color='#004080' size='-1'><b>Mbr Special</b></font> ")."</td>";
 
     $strdiscountlabel = "Special";
 
     // ----------------------First Row Labels ---------------------------------------------------------
-    echo "<td width='117' bgcolor='white' align='center'><font face='arial' color='#004080' size='-1'><b>";
-    echo $strdiscountlabel."</b></font></td>";
+    echo "<td width='117' bgcolor='white' align='center'><font face='arial' color='#004080' size='-1'>" . ($_SESSION['no_discount_info']?'':"<b>" . $strdiscountlabel."</b></font>")."</td>";
 
     if ($_SESSION["ttlflag"] == 1  and $_SESSION["End"] != 1 ) {
         if ($_SESSION["fntlflag"] == 1) {
@@ -150,10 +152,10 @@ function printfooter() {
     }
 
     echo "<tr><td height='2' colspan='5'></td></tr>";
-    echo "<tr><td width='119' height='60' align='left' bgcolor='#EEEEEE'><font face='arial' size='+2' color='#004080'><center><b>" . number_format($dblyousaved, 2) . "</b></center></font></td>";
-    echo "<td width='117' align='center'><font face='arial' color='#808080' size='+1'>" . number_format($strperdiscount, 2) . "</font></td>";
-    echo "<td width='117' align='center'><font face='arial' color='#808080' size='+1'>" . number_format($strmemSpecial, 2) . "</font></td>";
-    echo "<td width='117' height='60' align='center'><font face='arial' color='#808080' size='+1'>" . number_format($dbldiscounttotal, 2) . "</font></td>";
+    echo "<tr><td width='119' height='60' align='left' >" . ($_SESSION['no_discount_info']?'':" <font face='arial' size='+2' color='#004080'><center><b>" . number_format($dblyousaved, 2) . "</b></center></font>")." </td>";
+    echo "<td width='117' align='center'>" . ($_SESSION['no_discount_info']?'':"<font face='arial' color='#808080' size='+1'>" . number_format((double)$strperdiscount, 2) . "</font>")."</td>";
+    echo "<td width='117' align='center'>" . ($_SESSION['no_discount_info']?'':"<font face='arial' color='#808080' size='+1'>" . number_format((double)$strmemSpecial, 2) . "</font>")."</td>";
+    echo "<td width='117' height='60' align='center'>" . ($_SESSION['no_discount_info']?'':"<font face='arial' color='#808080' size='+1'>" . number_format($dbldiscounttotal, 2) . "</font>")."</td>";
 
     if ($_SESSION["ttlflag"] == 1 && $_SESSION["End"] != 1) {
 

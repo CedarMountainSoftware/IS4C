@@ -275,6 +275,20 @@ INSERT INTO configuration
         'text',
         6
     ),
+	(
+		NULL,
+		'no_discount_info'
+		'1',
+		'flag',
+		6
+	),
+	(
+		NULL,
+		'ccAddPercent'
+		'0.02',
+		'text',
+		7
+	),
     (
         NULL,
         'ccLive',
