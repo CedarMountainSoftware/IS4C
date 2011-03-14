@@ -19,8 +19,7 @@
 			<h1>Synchronization</h1>
 			<ul>
 				<li><a href="reload.php?t=products">Products</a></li>
-				<li><a href="reload.php?t=custdata">Membership</a></li>
-				<li><a href="reload.php?t=employees">Employees</a></li>
+				<li><a href="reload.php?t=members">Members</a></li>
 				<li><a href="reload.php?t=departments">Departments</a></li>
 				<li><a href="reload.php?t=subdepts">Subdepartments</a></li>
 				<li><a href="reload.php?t=tenders">Tenders</a></li>

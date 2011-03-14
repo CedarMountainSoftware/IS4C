@@ -9,13 +9,9 @@
 				$name='products';
 				$type='Products';
 			break;
-			case 'custdata':
-				$name='custdata';
-				$type='Membership';
-			break;
-			case 'employees':
-				$name='employees';
-				$type='Employees';
+			case 'members':
+				$name='members';
+				$type='Members';
 			break;
 			case 'departments':
 				$name='departments';
