@@ -1,0 +1,22 @@
+use is4c_op;
+
+DROP VIEW IF EXISTS employee;
+
+create view employees as
+
+select
+
+CardNo AS emp_no,
+CashierPassword,
+AdminPassword,
+FirstName,
+LastName,
+JobTitle,
+Active AS EmpActive,
+frontendsecurity,
+backendsecurity
+
+
+FROM
+members;
+

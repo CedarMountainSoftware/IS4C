@@ -1,6 +1,9 @@
 use opdata;
 
-INSERT INTO `custdata` VALUES
+/* formerly custdata */
+INSERT INTO `members`
+(CardNo, personNum, LastName, FirstName, CashBack, Balance, Discount, MemDiscountLimit, ChargeOk, WriteChecks, StoreCoupons, `Type`, memType, staff, SSI, Purchases, NumberOfChecks, memCoupons, blueLine, Shown, id)
+VALUES
 
 (6000,1,'Freyden','Linda',40,0,2,0,0,1,1,'pc',2,0,0,0,0,1,NULL,1,179),
 (6001,1,'Smith','Holly',40,0,2,0,0,1,1,'pc',2,0,0,0,0,1,NULL,1,180),
@@ -14,3 +17,10 @@ INSERT INTO `custdata` VALUES
 (6009,1,'Madden','Scott',40,0,2,0,0,1,1,'pc',2,0,0,0,0,1,NULL,1,193),
 (6010,1,'Larkins','Jordan',40,0,2,0,0,1,1,'pc',2,0,0,0,0,1,NULL,1,195),
 (99999,1,'NON-MEMBER','',40,0,0,0,1,1,1,'reg',0,0,0,0,0,1,'Community Member',1,925);
+
+
+/* formerly employees */
+INSERT INTO `members`
+(CardNo, CashierPassword, AdminPassword,FirstName, LastName, JobTitle, Active, frontendsecurity, backendsecurity)
+
+VALUES (56,56,56,'Kate','Kipling','STAFF',1,20,20),(7000,7000,7000,'John','Norton','SUB',1,15,15);
