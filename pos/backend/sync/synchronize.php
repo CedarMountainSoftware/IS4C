@@ -90,6 +90,8 @@
 					// TODO - Find quick ways to test the connectivity of a lane instead of relying on long timeouts
 					$sync='mysqldump -u '.$_SESSION['mUser'].' '.($_SESSION['mPass']?' -p'.$_SESSION['mPass']:'').' is4c_op '.$name.' | mysql -u '.$_SESSION['mUser'].' '.($_SESSION['mPass']?' -p'.$_SESSION['mPass']:'').' -h '.$lane_ip.' is4c_op 2>&1';
 					exec($sync, $result);
+					$sync='mysqldump -u '.$_SESSION['mUser'].' '.($_SESSION['mPass']?' -p'.$_SESSION['mPass']:'').' is4c_op '.$name.' | mysql -u '.$_SESSION['mUser'].' '.($_SESSION['mPass']?' -p'.$_SESSION['mPass']:'').' -h '.$lane_ip.' opdata 2>&1';
+					exec($sync, $result);
 					foreach ($result as $msg) {
 						if ($msg && strlen($msg)>0) {
 							$html.=$lane_ip.' failed ('.$msg.')</p>
