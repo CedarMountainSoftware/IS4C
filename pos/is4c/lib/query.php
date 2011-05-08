@@ -35,6 +35,30 @@
         return false;
     }
 
+
+	/* authenticates based member no. and cashier password */
+    function user_auth($cardno, $password) {
+        $password = mysql_real_escape_string($password);
+        $query =
+            'SELECT emp_no'
+            . '    FROM employees'
+            . '    WHERE emp_no = \'' . $cardno . '\''
+            . '    AND ( CashierPassword = \'' . $password . '\''
+            . '        OR AdminPassword = \'' . $password . '\' );';
+		error_log("query: $query");
+        $rows = sql_fetch_assoc_array(sql_query($query, pDataConnect()));
+        if ($rows)
+        {
+		error_log("got row: " . $rows['emp_no']);
+            return $rows['emp_no'];
+        }
+        else
+        {
+		error_log("no rows");
+            return false;
+        }
+    }
+
     /*Takes a password and returns the employee number*/
     function user_pass($password) {
         $password = mysql_real_escape_string($password);

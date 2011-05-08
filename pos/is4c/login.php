@@ -87,7 +87,9 @@
                             <td>
                                 <span style='font-weight: bold;'>log in</span>
                                 <form name='form' method='post' autocomplete='off' action='lib/authenticate.php'>
-                                    <input type='password' name='reginput' size='20' tabindex='0' onblur='document.form.reginput.focus();' />
+                                    Cashier #<br /><input type='text' name='cashiernum' size='20' tabindex='0' onblur='document.form.reginput.focus();' /><br />
+                                    Password<br /><input type='password' name='cashierpassword' size='20' tabindex='0' onblur='document.form.reginput.focus();' /><br />
+								<input type="submit" value="Login" />
                                 </form>
                                 <br />
                                 <?php
@@ -97,7 +99,6 @@
                                         unset($_SESSION["auth_fail"]);
                                     }
                                 ?>
-                                Please enter your password
                             </td>
                         </tr>
                     </table>
