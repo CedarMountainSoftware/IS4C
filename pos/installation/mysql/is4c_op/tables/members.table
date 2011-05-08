@@ -25,7 +25,7 @@ CREATE TABLE `members` (
   `Shown` tinyint(4) NOT NULL default '1',
 
 /* - fields formerly from employees table below - */
-  `CashierPassword` int(11) default NULL comment 'The password the user will use to log into the cash register.',
+  `CashierPassword` varchar(32) default NULL comment 'The password the user will use to log into the cash register.',
   `AdminPassword` int(11) default NULL comment 'Users with an Admin password can use it to approve some administrative tasks.',
   `JobTitle` varchar(255) default NULL,
   `Active` tinyint(4) default NULL comment '1 if the employee is active.  0 if they are inactive.',
