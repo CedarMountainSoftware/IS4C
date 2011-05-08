@@ -334,8 +334,8 @@ function tenderReport() {
     writeLine($receipt . chr(27) . chr(105));    // apbw/tt 3/16/05 Franking II
     sql_close($db_a);
 
-    $_SESSION["msgrepeat"] = 1;
-    $_SESSION["strRemembered"] = "ES";
+//    $_SESSION["msgrepeat"] = 1;
+//    $_SESSION["strRemembered"] = "ES";
         gohome();
 }
 

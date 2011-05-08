@@ -31,6 +31,7 @@ if (!function_exists("voiditem")) include("void.php");
 if (!function_exists("clubCard")) include ("clubCard.php");            // --- apbw 2/15/05 ClubCard ---
 if (!function_exists("ccEntered")) include("ccEntered.php");
 if (!function_exists("drawerKick")) include_once("printLib.php");
+if (!function_exists("tenderReport")) include("tenderReport.php");
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
@@ -329,7 +330,20 @@ if (!function_exists("drawerKick")) include_once("printLib.php");
         elseif (strlen($entered) == 2) {
             switch ($entered) {
                 case "ES":
-                    endofShift();
+                case "SO":
+                    if ($_SESSION["LastID"] != 0) {
+                        boxMsg("Transaction in Progress");
+                    }
+                    else {
+                        setglobalvalue("LoggedIn", 0);
+                        echo "<script type=\"text/javascript\">"
+                            ."window.top.location='/login.php'"
+                            ."</script>";
+                        $intAway = 1;
+                        $_SESSION["training"] = 0;
+                        tenderReport();
+                        endofShift();
+                    }
                     break;
                 case "RI":
                     break;
@@ -404,19 +418,6 @@ if (!function_exists("drawerKick")) include_once("printLib.php");
                         else {
                             voiditem($str);
                         }
-                    }
-                    break;
-                case "SO":
-                    if ($_SESSION["LastID"] != 0) {
-                        boxMsg("Transaction in Progress");
-                    }
-                    else {
-                        setglobalvalue("LoggedIn", 0);
-                        echo "<script type=\"text/javascript\">"
-                            ."window.top.location='/login.php'"
-                            ."</script>";
-                        $intAway = 1;
-                        $_SESSION["training"] = 0;
                     }
                     break;
                 case "CL":
