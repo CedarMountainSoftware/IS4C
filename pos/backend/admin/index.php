@@ -16,8 +16,9 @@
 	
 	$html.='
 		<div id="page_panel">
-			<h1>Just ideas for now...</h1>
+			<h1>Possibilities...</h1>
 			<ul>
+				<li><a href="members.php">Members</a></li>
 				<li>Lane Configuration (IPs, nicknames)</li>
 				<li>SQL Configuration (users, passwords)</li>
 				<li>User Configuration (users, passwords, access levels for maintenance &amp; reporting)</li>
