@@ -151,7 +151,7 @@
 	UPDATE `is4c_op`.`products` SET
 		`advertised`='.((isset($_REQUEST['edit_advertised']) && $_REQUEST['edit_advertised']=='on')?'1':'0').',
 		`department`='.$_REQUEST['edit_department'].',
-		`deposit`='.$_REQUEST['edit_deposit'].',
+		`deposit`='.($_REQUEST['edit_deposit']?$_REQUEST['edit_deposit'] : '0').',
 		`description`=\''.$_REQUEST['edit_description'].'\',
 		`discount`='.((isset($_REQUEST['edit_discount']) && $_REQUEST['edit_discount']=='on')?'1':'0').',
 		`foodstamp`='.((isset($_REQUEST['edit_foodstamp']) && $_REQUEST['edit_foodstamp']=='on')?'1':'0').',
@@ -161,8 +161,8 @@
 		`scale`='.((isset($_REQUEST['edit_scale']) && $_REQUEST['edit_scale']=='on')?'1':'0').',
 		`size`=\''.$_REQUEST['edit_size'].'\',
 		`subdept`='.$_REQUEST['edit_subdepartment'].',
-		`tareweight`='.$_REQUEST['edit_tareweight'].',
-		`tax`='.$_REQUEST['edit_tax'].',
+		`tareweight`='.($_REQUEST['edit_tareweight'] ? $_REQUEST['edit_tareweight'] : '0').',
+		`tax`='.($_REQUEST['edit_tax'] ? $_REQUEST['edit_tax'] : '0').',
 		`unitofmeasure`=\''.$_REQUEST['edit_unitofmeasure'].'\',
 		`upc`='.$_REQUEST['edit_upc'].',
 		`wicable`='.((isset($_REQUEST['edit_wicable']) && $_REQUEST['edit_wicable']=='on')?'1':'0').'
