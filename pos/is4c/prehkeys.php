@@ -289,13 +289,14 @@ function tender($right, $strl) {
                     $_SESSION["change"] = 0;
                 }
 
-                if ($right == "CK" && $_SESSION["msgrepeat"] == 0) {
-                    $_SESSION["boxMsg"] = "<br />insert check<br />press [enter] to endorse<p><font size='-1'>[clear] to cancel</font></p>";
-                    $_SESSION["endorseType"] = "check";
-                    boxMsgscreen();
+//                if ($right == "CK" && $_SESSION["msgrepeat"] == 0) {
+//                   $_SESSION["boxMsg"] = "<br />insert check<br />press [enter] to endorse<p><font size='-1'>[clear] to cancel</font></p>";
+//                    $_SESSION["endorseType"] = "check";
+//                    boxMsgscreen();
 
-                }
-                else {
+//                }
+//				  else
+				{
                     addItem($tender_upc, $tender_desc, "T", $tender_code, "", 0, 0, 0, $unit_price, $tendered, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '');
                     $_SESSION["msgrepeat"] = 0;
                     $_SESSION["TenderType"] = $tender_code;            /***added by apbw 2/1/05 SCR ***/
