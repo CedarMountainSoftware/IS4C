@@ -5,8 +5,60 @@
 				$departments_result=get_departments(&$backoffice);
 			require_once($_SERVER["DOCUMENT_ROOT"]."/lib/table_subdepts.php");
 				$subdepartments_result=get_subdepartments(&$backoffice);
-				
+
+			
+				$departments = array();
+				$subdepartments = array();
+				$subdept_ids = array();
+
+				// put the departments / subdepartment data in array to initialize javascript data
+				while ($row=mysql_fetch_array($departments_result)) {
+					$departments[$row['dept_no']] = $row['dept_name'];
+					$subdept_ids[$row['dept_no']] = array();
+				}
+
+				while ($row=mysql_fetch_array($subdepartments_result)) {
+					$subdepartments[$row['subdept_no']] = $row['subdept_name'];
+					$subdept_ids[$row['dept_ID']][] = $row['subdept_no'];
+				}
+
+
 			$html='
+			<script language="Javascript">
+			<!--
+				Departments = Object();
+				Subdepartments = Object();
+				Subdept_Ids = Object();
+				';
+			foreach ($departments as $dept_id => $dept_name) {
+				$html .= "Departments[$dept_id] = '" . $dept_name . "';\n";
+				$html .= "Subdept_Ids[$dept_id] = Array();\n";
+				$n = 0;
+				foreach ($subdept_ids[$dept_id] as $subid) {
+					$html .= "Subdept_Ids[$dept_id][$n] = $subid;\n";
+					$n++;
+				}
+			}
+			foreach ($subdepartments as $subdept_id => $subdept_name) {
+				$html .= "Subdepartments[$subdept_id] = '" . $subdept_name . "';\n";
+			}
+
+
+			$html .= '
+
+				function switchDept(dept_id) {
+					var subselect = document.getElementById("edit_subdepartment");
+					var oldval = subselect.options[subselect.selectedIndex].value;
+					subselect.options.length = 0;
+					for (var idx = 0; idx < Subdept_Ids[dept_id].length; idx++) {
+						var isselected = (oldval == Subdept_Ids[dept_id][idx]) ? true : false;
+						subselect.options[idx] = new Option(Subdepartments[Subdept_Ids[dept_id][idx]], Subdept_Ids[dept_id][idx], isselected, isselected);
+					}
+
+				}
+			// -->
+			</script>
+
 			<form action="./" method="post" name="edit">
 				<div class="edit_column">
 					<fieldset>
@@ -31,10 +83,10 @@
 						</div>
 						<div class="edit_row">
 							<label for="edit_department">Dep<span class="accesskey">a</span>rtment</label>
-							<select accesskey="a" id="edit_department" name="edit_department" size=1>';
-				while ($row=mysql_fetch_array($departments_result)) {
+							<select accesskey="a" id="edit_department" name="edit_department" size=1 onchange="switchDept(this.options[this.selectedIndex].value)" >';
+				foreach ($departments as $dept_no => $dept_name) {
 					$html.='
-								<option '.($row['dept_no']==$backoffice['product_detail']['department']?'selected ':'').'value="'.$row['dept_no'].'">'.$row['dept_name'].'</option>';
+								<option '.($dept_no==$backoffice['product_detail']['department']?'selected ':'').'value="'.$dept_no.'">'.$dept_name.'</option>';
 				}
 				
 				$html.='
@@ -44,9 +96,11 @@
 							<label for="edit_subdepartment">Subdepartme<span class="accesskey">n</span>t</label>
 							<select accesskey="n" id="edit_subdepartment" name="edit_subdepartment" size=1>';
 				
-				while ($row=mysql_fetch_array($subdepartments_result)) {
+				foreach ($subdepartments as $subdept_id => $subdept_name) {
+					if (in_array($subdept_id, $subdept_ids[$backoffice['product_detail']['department']] )) {
 					$html.='
-								<option '.($row['subdept_no']==$backoffice['product_detail']['subdept']?'selected ':'').'value="'.$row['subdept_no'].'">'.$row['subdept_name'].'</option>';
+								<option '.($subdept_id==$backoffice['product_detail']['subdept']?'selected ':'').'value="'.$subdept_id.'">'.$subdept_name.'</option>';
+					}
 				}
 				
 				$html.='
