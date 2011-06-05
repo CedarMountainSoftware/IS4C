@@ -18,7 +18,8 @@
 		<div id="page_panel">
 			<h1>Reports</h1>
 			<ul>
-				<li><a href="prodsales.php">Prodect Sales Report</a></li>
+				<li><a href="prodsales.php">Product Sales Report</a></li>
+				<li><a href="custitems.php">Custom Items Report</a></li>
 			</ul>
 		</div>';
 	
