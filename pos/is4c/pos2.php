@@ -424,6 +424,7 @@ if (!function_exists("tenderReport")) include("tenderReport.php");
                     clearinput();
                     break;
                 case "NS":
+					/*
                     if ($_SESSION["LastID"] != 0) {
                         boxMsg("Transaction in Progress");
                     }
@@ -431,6 +432,9 @@ if (!function_exists("tenderReport")) include("tenderReport.php");
                         $intAway = 1;
                         maindisplay("nslogin.php");
                     }
+					 */
+					drawerKick();
+					gohome();
                     break;
                 case "CN":
                     if ($_SESSION["runningTotal"] == 0) {
