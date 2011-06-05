@@ -41,7 +41,10 @@ function voiditem($item_num) {
             }
             elseif (!$row["upc"] || strlen($row["upc"]) < 1) {
                 voidid($item_num);
-            }
+			}
+			elseif ($row['upc'] == "CardFee") {
+                voidid($item_num);
+			}
             elseif ($_SESSION["discounttype"] == 3) {
                 voidupc($row["quantity"]."*".$row["upc"]);
             }
@@ -97,7 +100,7 @@ function voidid($item_num) {
         sql_query($update, $db);
         addItem($upc, $row["description"], $row["trans_type"], $row["trans_subtype"], "V", $row["department"], $cost, $quantity, $unitPrice, $total, $row["regPrice"], $scale, $row["tax"], $foodstamp, $discount, $memDiscount, $discountable, $discounttype, $quantity, $row["volDiscType"], $row["volume"], $VolSpecial, 0, 0, 1, 0, '');
 
-        if ($row["trans_type"] != "T") {
+        if ($row["trans_type"] != "T" && $row['trans_type'] != "A") {
             $_SESSION["ttlflag"] = 0;
             $_SESSION["ttlrequested"] = 0;
         }
