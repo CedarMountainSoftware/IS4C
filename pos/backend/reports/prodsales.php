@@ -37,7 +37,7 @@ $html.=head();
 // $html .= '<script src="../src/CalendarControl.js" language="javascript"></script>';
 
 $html.='
-	<title>IS4C - Members</title>
+	<title>IS4C - Product Sales</title>
 </head>
 <body>';
 	
@@ -77,10 +77,10 @@ if (isset($_POST['submit'])) {
 
 	$ourwhere = "";
 	if ($startdate && $enddate) {
-		$ourwhere = " WHERE tdate >= '" . mysql_real_escape_string($startdate) . "' AND tdate <= '" . mysql_real_escape_string($enddate) . "'";
+		$ourwhere = " tdate >= '" . mysql_real_escape_string($startdate) . "' AND tdate <= '" . mysql_real_escape_string($enddate) . "'";
 	}
 
-	$query = "SELECT DISTINCT upc AS upcnum, (SELECT count(upc) FROM dlog di WHERE di.upc = upcnum $oulrwhere) AS cnt FROM dlog $ourwhere";
+	$query = "SELECT DISTINCT upc AS upcnum, (SELECT count(upc) FROM dlog di WHERE di.upc = upcnum " . ( $ourwhere ? "AND $ourwhere" : "") . ") AS cnt FROM dlog " . ($ourwhere ? "WHERE $ourwhere" : "");
 //	echo $query . "<br \>\n";
 	$res = mysql_query($query, $link);
 	if (!$res) {
@@ -123,8 +123,8 @@ if (isset($_POST['submit'])) {
 } else {
 	$html .= startform();
 	$html .= "<table>";
-	$html .= tablerow("Start Date:", textbox("startdate", "", "14", "20", array("onclick" => "showCalendarControl(this)")));
-	$html .= tablerow("End Date:", textbox("enddate", "", "14", "20", array("onclick" => "showCalendarControl(this)")));
+	$html .= tablerow("Start Date :", textbox("startdate", "", "14", "20", array("onclick" => "showCalendarControl(this)")). " (YYYY-MM-DD)");
+	$html .= tablerow("End Date :", textbox("enddate", "", "14", "20", array("onclick" => "showCalendarControl(this)")). " (YYYY-MM-DD)");
 	$html .= hiddeninput("submit", "1");
 	$html .= "</table>";
 	$html .= '<input type="submit" value="Run Report" />';
