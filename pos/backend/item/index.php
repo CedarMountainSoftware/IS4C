@@ -32,6 +32,12 @@
 	require_once('sql.php');
 	
 	if (isset($_REQUEST['a']) && $_REQUEST['a']=='delete') {
+		if (delete_product($_REQUEST['edit_id'])) {
+			$backoffice['status'][] = "Product Deleted Successfully";
+		} else {
+			$backoffice['status'][] = "Error Deleting Product.";
+		}
+
 	} else if (isset($_REQUEST['a']) && $_REQUEST['a']=='insert') {
 		// TODO - Check against UPC constraints
 		$backoffice['product_detail']['upc']=$_REQUEST['q'];

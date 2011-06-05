@@ -63,7 +63,7 @@
 				<div class="edit_column">
 					<fieldset>
 						<legend>Core</legend>
-						<input name="a" type="hidden" value="update"/>
+						<input name="a" id="a" type="hidden" value="update"/>
 						<input name="edit_id" type="hidden" value="'.$backoffice['product_detail']['id'].'"/>
 						<div class="edit_row">
 							<input readonly name="edit_upc" type="text" value="'.$backoffice['product_detail']['upc'].'"/>
@@ -148,9 +148,10 @@
 					<fieldset>
 						<legend>Actions</legend>
 						<input disabled type="button" value="Clone"/>
-						<input disabled type="button" value="Delete"/>
+						<input type="button" name="action" value="Delete"
+						onclick="if(confirm(\'Are you sure you want to delete this item?\')) { document.getElementById(\'a\').value = \'delete\'; this.form.submit(); }" />
 						<input disabled type="button" value="Reset"/>
-						<input type="submit" value="Save"/>
+						<input type="submit" name="action" value="Save"/>
 					</fieldset>
 				</div>
 			</form>';

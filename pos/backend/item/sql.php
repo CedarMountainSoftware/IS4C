@@ -178,4 +178,24 @@
 			}
 		}
 	}
+
+	function delete_product($id) {
+		$link=mysql_connect($_SESSION["mServer"], $_SESSION["mUser"], $_SESSION["mPass"]);
+		mysql_select_db("is4c_op", $link);
+		if ($link) {
+			$query = "DELETE FROM products WHERE id = " . mysql_real_escape_string($id, $link);
+			
+			$result=mysql_query($query, $link);
+			if ($result) {
+				return true;
+			} else {
+				echo 'Error with MySQL query: '.mysql_error($link);
+				return false;
+			}
+
+		} else {
+			echo "Error connecting to database";
+			return false;
+		}
+	}
 ?>
