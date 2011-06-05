@@ -360,11 +360,11 @@ function deptkey($price, $dept) {
             $_SESSION["quantity"] = 1;
     }
         
-    if (is_numeric($dept) && is_numeric($price) && strlen($price) >= 1 && strlen($dept) >= 2) {
+    if (is_numeric($dept) && is_numeric($price) && strlen($price) >= 1 && strlen($dept) >= 1) {
         $strprice = $price;
         $strdept = $dept;
         $price = $price/100;
-        $dept = $dept/10;
+//        $dept = $dept/10;
 
         if ($_SESSION["casediscount"] > 0 && $_SESSION["casediscount"] <= 100) {
             $case_discount = (100 - $_SESSION["casediscount"]) / 100;
@@ -475,7 +475,7 @@ function deptkey($price, $dept) {
                 }
             }
 
-            if ($price > $deptmax && $_SESSION["msgrepeat"] == 0) {
+            if ($deptmax > 0 && $price > $deptmax && $_SESSION["msgrepeat"] == 0) {
                 $_SESSION["boxMsg"] = "$" . $price . " is greater than department limit<p>"
                     . "<font size='-1'>[clear] to cancel, [enter] to proceed</font></p>";
                 boxMsgscreen();
