@@ -31,6 +31,21 @@ $header = "Product Sales Report";
 $html='<!DOCTYPE HTML>
 <html>
 <head>';
+
+$html .= '<script type="text/javascript" src="../lib/jquery.js"></script>';
+$html .= '<script type="text/javascript" src="../lib/jquery-ui.js"></script>';
+$html .= <<<SCRIPT
+<script language="Javascript">
+$(document).ready(function() {
+	$('#startdate').datepicker({dateFormat: 'yy-mm-dd'});
+	$('#enddate').datepicker({dateFormat: 'yy-mm-dd'});
+});
+
+</script>
+
+<link type="text/css" rel="stylesheet" href="../lib/jquery-ui.css" />
+
+SCRIPT;
 	
 $html.=head();
 	
