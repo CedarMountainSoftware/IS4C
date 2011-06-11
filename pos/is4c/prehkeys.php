@@ -28,6 +28,8 @@ if (!function_exists("truncate2")) include_once("lib.php");        // apbw 03/24
 if (!function_exists("lastpage")) include("listitems.php");
 if (!function_exists("blueLine")) include("session.php");
 
+include_once("temptrans.php");
+
 function memberID($member_number) {
 //    new memberID function now searches for staff (staff != 0) and for sister orgs. (memType = 6)
 //    to allow cashier to select which personNum to apply to current transaction.    
@@ -845,6 +847,7 @@ function endofShift() {
     ttl();
     $_SESSION["runningtotal"] = $_SESSION["amtdue"];
     tender("CA", $_SESSION["runningtotal"] * 100);
+	cleartemptrans();
 }
 
 //---------------------------    WORKING MEMBER DISCOUNT    -------------------------- 
