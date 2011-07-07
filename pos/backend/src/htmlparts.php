@@ -10,14 +10,19 @@
 		<div id="page_nav">
 			<ul>
 				<li><a href="/item">Item Maintenance</a></li>
-				<li><a href="/batch">Sale Batches</a></li>
+<!--				<li><a href="/batch">Sale Batches</a></li> -->
 				<li><a href="/admin/shelftags.php">Shelf Tags</a></li>
 				<li><a href="/reports/">Reports</a></li>
 				<li>Dayend Balancing</li>
 				<li><a href="/sync">Synchronization</a></li>
 				<li><a href="/admin/members.php">Members</a></li>
 			</ul>
-		</div>';
+			<br /><br /><br /><br />
+			<a href="http://localhost/">localhost</a>
+			</div>
+
+			';
+		
 	}
 	
 	function foot() {
