@@ -56,25 +56,76 @@ $html.=body();
 		exit;
 	} 
 
-	$query = "SELECT  upc, description from products where upc < 99999 ORDER BY upc asc";
+	$query = "SELECT  upc, description from products where upc <= 99999 ORDER BY upc asc";
 //	echo $query . "<br \>\n";
 	$res = mysql_query($query, $link);
 	if (!$res) {
 		echo "error: " . mysql_error() . "<br />\n";
 	}
 
-	$html .= "<h2>Custom Items</h2>";
-
-	
-	$html .= "<table >";
-	$html .= "<tr><th>UPC</th><th>Product</th></tr>";
+	$custitems = array();
 	while ($row = mysql_fetch_assoc($res)) {
 		$upc = $row['upc'];
 		$desc = $row['description'];
 
-		$html .= tablerow("<a href=\"/item/?a=search&q=".$upc."&t=upc\">$upc</a>", $desc);
+		$custitems[$upc] = $desc;
 	}
 
+	$sections = array(
+		array("1", 999, "misc"),
+		array("1000", 1099, "grains"),
+		array("1100", 1199, "beans"),
+		array("1200", 1399, "spices"),
+		array("1400", 1499, "teas and herbs"),
+		array("1500", 1599, "flours and baking"),
+		array("1600", 1699, "snacks and candy"),
+		array("1700", 1799, "coffee"),
+		array("1800", 1899, "pastas"),
+		array("1900", 1999, "oils and vinegars (liquids)"),
+		array("2000", 2399, "local packaged grocery and bakery"),
+		array("2400", 2999, "unassigned"),
+		array("3000", 3499, "chill repack cheese"),
+		array("3500", 3599, "bulk or repack nuts and seeds"),
+		array("3600", 3699, "dried fruit"),
+		array("3700", 3799, "bulk or repack olives"),
+		array("3800", 3899, "unassigned"),
+		array("4000", 4999, "conventional produce"),
+		array("5000", 5099, "local frozen"),
+		array("5100", 5999, "unassigned"),
+		array("6000", 6249, "local meats"),
+		array("6250", 6999, "unassigned"),
+		array("7000", 7499, "local teas, and HABA"),
+		array("7500", 7999, "unassigned"),
+		array("8000", 8999, "unassigned"),
+		array("9000", 9999, "local organic or homegrown produce"),
+		array("10000", 98999, "unknown"),
+		array("99000", 99999, "local organic or homegrown produce"),
+	);
+
+	$html .= "<h2>Custom Items</h2>";
+
+	$nextupc = 0;
+	
+	$html .= "<table >";
+//	$html .= "<tr><th>UPC</th><th>Product</th></tr>";
+	foreach ($sections as $sec) {
+
+		$bufferrows = array();
+		foreach ($custitems as $upc => $desc) {
+			// a bit inefficient, but it works for now
+			if ($upc >= $sec[0] && $upc <= $sec[1])
+				$bufferrows[] = tablerow("<a href=\"/item/?a=search&q=".$upc."&t=upc\">$upc</a>", $desc);
+		}
+
+		if (count($bufferrows) > 0) {
+			$html .= "<tr><td colspan=\"2\"><b>" . $sec[2] . "</b></td></tr>";
+		}
+
+		foreach ($bufferrows as $thisrow) {
+			$html .= $thisrow;
+		}
+
+	}
 	$html .= "</table>";
 
 
