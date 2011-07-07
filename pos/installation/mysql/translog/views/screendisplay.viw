@@ -25,7 +25,7 @@ as description,
 	WHEN (trans_status = 'S')
 		THEN 'Staff special'
 	WHEN (scale <> 0 and quantity <> 0)
-		THEN CONCAT( quantity,' @ ',unitPrice)
+		THEN CONCAT( quantity,' @ ',format(unitPrice,2))
 	WHEN (abs(itemQtty) > 1 and abs(itemQtty) > abs(quantity) and discounttype <> 3 and quantity = 1)
 		THEN CONCAT(volume,' for ',unitPrice)
 	WHEN (abs(itemQtty) > 1 and abs(itemQtty) > abs(quantity) and discounttype <> 3 and quantity <> 1)
