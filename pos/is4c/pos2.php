@@ -521,7 +521,14 @@ if (!function_exists("tenderReport")) include("tenderReport.php");
         }
         elseif (strstr($entered, "DP") && strlen($entered) > 3&& substr($entered, 0, 2) != "VD") {
             $deptsplit = explode("DP", $entered);
-            deptkey($deptsplit["0"], $deptsplit["1"]);
+			if (substr($deptsplit[1], -1) == "S") {
+				$dptmt = substr($deptsplit[1], 0, -1);
+				$usescale = 1;
+			} else {
+				$dptmt = $deptsplit[1];
+				$usescale = 0;
+			}
+            deptkey($deptsplit["0"], $dptmt, $usescale);
         }
         elseif (strlen($entered) > 2) {
             $left = substr($entered, 0, 2);

@@ -355,7 +355,7 @@ function tender($right, $strl) {
 
 //-------------------------------------------------------
 
-function deptkey($price, $dept) {
+function deptkey($price, $dept, $byweight = 0) {
     $intvoided = 0;
 
     if ($_SESSION["quantity"] == 0 && $_SESSION["multiple"] == 0) {
@@ -372,7 +372,26 @@ function deptkey($price, $dept) {
             $case_discount = (100 - $_SESSION["casediscount"]) / 100;
             $price = $case_discount * $price;
         }
-        $total = $price * $_SESSION["quantity"];
+
+		$quantity = $_SESSION['quantity'];
+
+		if ($byweight == 1) {
+			$hitareflag = 0;
+
+			$quantity = $_SESSION["weight"] - $_SESSION["tare"];
+
+			if ($quantity <= 0) {
+				$hitareflag = 1;
+			}
+
+			$_SESSION["tare"] = 0;
+		}
+
+		if ($hitareflag == 1) {
+			boxMsg("item weight must be greater than tare weight");
+		}
+
+        $total = $price * $quantity;
         $intdept = $dept;
 
         $query = "select * from departments where dept_no = " . $intdept;
@@ -498,7 +517,7 @@ function deptkey($price, $dept) {
                     $_SESSION["toggletax"] = 0;
                 }
 
-                addItem($price."DP".$dept, $row["dept_name"], "D", " ", " ", $dept, 0, $_SESSION["quantity"], $price, $total, $price, 0, $tax, $foodstamp, 0, 0, $deptDiscount, 0, $_SESSION["quantity"], 0, 0, 0, 0, 0, $intvoided, 0, '');
+                addItem($price."DP".$dept, $row["dept_name"], "D", " ", " ", $dept, 0, $quantity, $price, $total, $price, $byweight, $tax, $foodstamp, 0, 0, $deptDiscount, 0, $quantity, 0, 0, 0, 0, 0, $intvoided, 0, '');
                 $_SESSION["ttlflag"] = 0;
                 $_SESSION["ttlrequested"] = 0;
                 goodBeep();
