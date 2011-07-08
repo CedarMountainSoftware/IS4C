@@ -54,7 +54,9 @@
 			`products`.`unitofmeasure`, 
 			`products`.`upc`,
 			`products`.`wicable`,
-			`products`.`inUse` 
+			`products`.`inUse`,
+			`products`.`vendor_id`
+
 			FROM `is4c_op`.`products` WHERE 1=1 AND '.$query_where;
 			$result=mysql_query($query, $link);
 			if ($result) {
@@ -116,7 +118,7 @@
 			// TODO - Validate data before sending to MySQL
 			$link=mysql_connect($_SESSION["mServer"], $_SESSION["mUser"], $_SESSION["mPass"]);
 			if ($link) {
-				$query='INSERT `is4c_op`.`products` (`advertised`,`department`,`deposit`,`description`,`discount`,`foodstamp`,`inUse`,`modified`,`normal_price`,`scale`,`size`,`subdept`,`tareweight`,`tax`,`unitofmeasure`,`upc`,`wicable`) VALUES (
+				$query='INSERT `is4c_op`.`products` (`advertised`,`department`,`deposit`,`description`,`discount`,`foodstamp`,`inUse`,`modified`,`normal_price`,`scale`,`size`,`subdept`,`tareweight`,`tax`,`unitofmeasure`,`upc`,`wicable`,`vendor_id`) VALUES (
 		'.((isset($_REQUEST['edit_advertised']) && $_REQUEST['edit_advertised']=='on')?'1':'0').',
 		'.$_REQUEST['edit_department'].',
 		'.$_REQUEST['edit_deposit'].',
@@ -133,7 +135,9 @@
 		'.$_REQUEST['edit_tax'].',
 		\''.$_REQUEST['edit_unitofmeasure'].'\',
 		'.$_REQUEST['edit_upc'].',
-		'.((isset($_REQUEST['edit_wicable']) && $_REQUEST['edit_wicable']=='on')?'1':'0').')';
+		'.((isset($_REQUEST['edit_wicable']) && $_REQUEST['edit_wicable']=='on')?'1':'0').','.
+		(isset($_REQUEST['edit_vendor']) && $_REQUEST['edit_vendor']!=""?$_REQUEST['edit_vendor']:'NULL').
+		')';
 				$result=mysql_query($query, $link);
 				if ($result) {
 					array_push($backoffice['status'], 'Item added successfully');
@@ -165,7 +169,8 @@
 		`tax`='.($_REQUEST['edit_tax'] ? $_REQUEST['edit_tax'] : '0').',
 		`unitofmeasure`=\''.$_REQUEST['edit_unitofmeasure'].'\',
 		`upc`='.$_REQUEST['edit_upc'].',
-		`wicable`='.((isset($_REQUEST['edit_wicable']) && $_REQUEST['edit_wicable']=='on')?'1':'0').'
+		`wicable`='.((isset($_REQUEST['edit_wicable']) && $_REQUEST['edit_wicable']=='on')?'1':'0').',
+		`vendor_id`='.(isset($_REQUEST['edit_vendor']) && $_REQUEST['edit_vendor']!=""?$_REQUEST['edit_vendor']:'NULL'). ' 
 	WHERE `id`='.$_REQUEST['edit_id'].' LIMIT 1';
 				$result=mysql_query($query, $link);
 				if ($result) {

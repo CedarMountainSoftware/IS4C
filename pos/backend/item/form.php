@@ -5,11 +5,15 @@
 				$departments_result=get_departments(&$backoffice);
 			require_once($_SERVER["DOCUMENT_ROOT"]."/lib/table_subdepts.php");
 				$subdepartments_result=get_subdepartments(&$backoffice);
+			require_once($_SERVER["DOCUMENT_ROOT"]."/lib/table_vendors.php");
+				$vendors_result=get_vendors(&$backoffice);
 
 			
 				$departments = array();
 				$subdepartments = array();
 				$subdept_ids = array();
+
+				$vendors = array();
 
 				// put the departments / subdepartment data in array to initialize javascript data
 				while ($row=mysql_fetch_array($departments_result)) {
@@ -20,6 +24,10 @@
 				while ($row=mysql_fetch_array($subdepartments_result)) {
 					$subdepartments[$row['subdept_no']] = $row['subdept_name'];
 					$subdept_ids[$row['dept_ID']][] = $row['subdept_no'];
+				}
+
+				while ($row=mysql_fetch_array($vendors_result)) {
+					$vendors[$row['vendor_id']] = $row['vendor_name'];
 				}
 
 
@@ -101,6 +109,18 @@
 					$html.='
 								<option '.($subdept_id==$backoffice['product_detail']['subdept']?'selected ':'').'value="'.$subdept_id.'">'.$subdept_name.'</option>';
 					}
+				}
+				
+				$html.='
+							</select>
+						</div>
+						<div class="edit_row">
+							<label for="edit_vendor">Vendor</label>
+							<select id="edit_vendor" name="edit_vendor" size=1>';
+							$html .= '<option value=""> -- Unset -- </option>';
+				foreach ($vendors as $vendor_id => $vendor_name) {
+					$html.='
+								<option '.($vendor_id==$backoffice['product_detail']['vendor_id']?'selected ':'').'value="'.$vendor_id.'">'.$vendor_name.'</option>';
 				}
 				
 				$html.='

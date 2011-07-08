@@ -1,9 +1,7 @@
-USE `is4c_op`;
+use is4c_op;
 
 DROP TABLE IF EXISTS `vendors`;
 CREATE TABLE `vendors` (
-	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	`name` VARCHAR(30) NOT NULL,
-	PRIMARY KEY (`id`),
-	INDEX (`name`)
-) ENGINE = MYISAM ;
+  `vendor_id` int primary key auto_increment,
+	vendor_name varchar(255)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;

@@ -33,7 +33,8 @@ FIELDSET {
 
 LABEL[for="edit_description"],
 LABEL[for="edit_department"],
-LABEL[for="edit_subdepartment"] {
+LABEL[for="edit_subdepartment"],
+LABEL[for="edit_vendor"] {
  display: inline-block;
  width: 100px;
 }
