@@ -521,14 +521,17 @@ if (!function_exists("tenderReport")) include("tenderReport.php");
         }
         elseif (strstr($entered, "DP") && strlen($entered) > 3&& substr($entered, 0, 2) != "VD") {
             $deptsplit = explode("DP", $entered);
-			if (substr($deptsplit[1], -1) == "S") {
-				$dptmt = substr($deptsplit[1], 0, -1);
+			$dptmt = $deptsplit[1];
+
+			// do we use the scale?
+			if (substr($deptsplit[0], 0, 2) == "SA") {
+				$amount = substr($deptsplit[0], 2);
 				$usescale = 1;
 			} else {
-				$dptmt = $deptsplit[1];
+				$amount = $deptsplit[0];
 				$usescale = 0;
 			}
-            deptkey($deptsplit["0"], $dptmt, $usescale);
+            deptkey($amount, $dptmt, $usescale);
         }
         elseif (strlen($entered) > 2) {
             $left = substr($entered, 0, 2);
