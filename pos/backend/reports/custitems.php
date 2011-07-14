@@ -41,8 +41,8 @@ $html.='
 </head>
 <body>';
 	
-$html.=body();
 
+if ($_POST['doreport']) {
 
 	$link = mysql_connect("localhost", "backend", "is4cbackend");
 	if (!$link) {
@@ -56,21 +56,7 @@ $html.=body();
 		exit;
 	} 
 
-	$query = "SELECT  upc, description from products where upc <= 99999 ORDER BY upc asc";
-//	echo $query . "<br \>\n";
-	$res = mysql_query($query, $link);
-	if (!$res) {
-		echo "error: " . mysql_error() . "<br />\n";
-	}
-
-	$custitems = array();
-	while ($row = mysql_fetch_assoc($res)) {
-		$upc = $row['upc'];
-		$desc = $row['description'];
-
-		$custitems[$upc] = $desc;
-	}
-
+/*
 	$sections = array(
 		array("1", 999, "misc"),
 		array("1000", 1099, "grains"),
@@ -101,28 +87,50 @@ $html.=body();
 		array("10000", 98999, "unknown"),
 		array("99000", 99999, "local organic or homegrown produce"),
 	);
+*/
+
+
+	$sections = array();
+
+	$query = "SELECT id, range_start, range_end, title FROM custcategories ORDER BY title ASC";
+	$res = mysql_query($query, $link);
+	if (!$res) {
+		echo "error: " . mysql_error() . "<br />\n";
+	}
+	while ($row = mysql_fetch_assoc($res)) {
+//		$sections[] = array($row['range_start'], $row['range_end'], $row['title']);
+		$sections[] = $row;
+	}
+
+	$sectionitems = array();
+	foreach ($sections as $section) {
+		$query = "SELECT  upc, description from products where upc >= " . $section['range_start'] . " AND upc <= " . $section['range_end'] . " ORDER BY " . ($_POST['sortorder'] == "numeric" ? "upc asc" : "description asc");
+		$res = mysql_query($query, $link);
+		if (!$res) {
+			echo "error: " . mysql_error() . "<br />\n";
+		}
+
+		$custitems = array();
+		while ($row = mysql_fetch_assoc($res)) {
+			$upc = $row['upc'];
+			$desc = $row['description'];
+
+			$custitems[$upc] = $desc;
+		}
+		$sectionitems[] = $custitems;
+	}
 
 	$html .= "<h2>Custom Items</h2>";
-
-	$nextupc = 0;
-	
 	$html .= "<table >";
-//	$html .= "<tr><th>UPC</th><th>Product</th></tr>";
-	foreach ($sections as $sec) {
+	for ($idx = 0; $idx < count($sections); $idx++) {
+		if (count($sectionitems[$idx]) > 0) {
+			$html .= "<tr><td colspan=\"2\"><b>" . $sections[$idx]['title'] . "</b></td></tr>";
 
-		$bufferrows = array();
-		foreach ($custitems as $upc => $desc) {
-			// a bit inefficient, but it works for now
-			if ($upc >= $sec[0] && $upc <= $sec[1])
-				$bufferrows[] = tablerow("<a href=\"/item/?a=search&q=".$upc."&t=upc\">$upc</a>", $desc);
-		}
+			$custitems = $sectionitems[$idx];
+			foreach ($custitems as $upc => $desc) {
+				$html .= tablerow("<a href=\"/item/?a=search&q=".$upc."&t=upc\">$upc</a>", $desc);
+			}
 
-		if (count($bufferrows) > 0) {
-			$html .= "<tr><td colspan=\"2\"><b>" . $sec[2] . "</b></td></tr>";
-		}
-
-		foreach ($bufferrows as $thisrow) {
-			$html .= $thisrow;
 		}
 
 	}
@@ -130,6 +138,18 @@ $html.=body();
 
 
 $html.=foot();
+} else {
+
+	$html.=body();
+
+	$html .= startform();
+	$html .= "<table>";
+	$html .= tablerow("Sort order:", selectbox("sortorder", "", array("numeric" => "numeric", "alphabetic" => "alphabetic")));
+	$html .= hiddeninput("doreport", "1");
+	$html .= "</table>";
+	$html .= '<input type="submit" value="Run Report" />';
+	$html .= endform();
+}
 	
 $html.='
 	</body>

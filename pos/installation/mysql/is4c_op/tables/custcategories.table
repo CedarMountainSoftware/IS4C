@@ -1,0 +1,6 @@
+create table custcategories (
+	id int primary key auto_increment,
+	range_start int,
+	range_end int,
+	title varchar(255)
+);
