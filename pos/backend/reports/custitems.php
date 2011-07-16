@@ -3,8 +3,6 @@
 
     Copyright 2011 Missoula Food Co-op, Missoula, Montana.
 
-    This file is part of Fannie.
-
     IS4C is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -37,7 +35,7 @@ $html.=head();
 // $html .= '<script src="../src/CalendarControl.js" language="javascript"></script>';
 
 $html.='
-	<title>IS4C - Custom Items</title>
+	<title>IS4C - Custom Item PLU codes</title>
 </head>
 <body>';
 	
@@ -57,6 +55,7 @@ if ($_POST['doreport']) {
 	} 
 
 /*
+ * old (obsolete) hardcoded product categories
 	$sections = array(
 		array("1", 999, "misc"),
 		array("1000", 1099, "grains"),
@@ -92,7 +91,7 @@ if ($_POST['doreport']) {
 
 	$sections = array();
 
-	$query = "SELECT id, range_start, range_end, title FROM custcategories ORDER BY title ASC";
+	$query = "SELECT id, range_start, range_end, title FROM custcategories ORDER BY " . ($_POST['sortorder'] == "numeric" ? "range_start" : " title ") . " ASC";
 	$res = mysql_query($query, $link);
 	if (!$res) {
 		echo "error: " . mysql_error() . "<br />\n";
@@ -120,24 +119,34 @@ if ($_POST['doreport']) {
 		$sectionitems[] = $custitems;
 	}
 
-	$html .= "<h2>Custom Items</h2>";
-	$html .= "<table >";
+	$html .= "<h2>Custom Item PLU Codes</h2>";
 	for ($idx = 0; $idx < count($sections); $idx++) {
 		if (count($sectionitems[$idx]) > 0) {
-			$html .= "<tr><td colspan=\"2\"><b>" . $sections[$idx]['title'] . "</b></td></tr>";
+			$html .= "<h3>" . $sections[$idx]['title'] . "</h3>";
 
 			$custitems = $sectionitems[$idx];
+			$html .= "<table border=\"1\" cellpadding=\"5\" cellspacing=\"5\">";
 			foreach ($custitems as $upc => $desc) {
-				$html .= tablerow("<a href=\"/item/?a=search&q=".$upc."&t=upc\">$upc</a>", $desc);
+				$dispupc = preg_replace("/^0*/", "", $upc);
+				$html .= "<tr>" .
+					"<td align=\"right\">" . 
+					"<a href=\"/item/?a=search&q=".$upc."&t=upc\" style=\"text-decoration: none; color: black\">$dispupc</a>".
+					"</td>" .
+					"<td>" .
+					$desc .
+					"</td>".
+					"</tr>";
 			}
+			$html .= "</table>";
 
 		}
 
 	}
-	$html .= "</table>";
 
 
 $html.=foot();
+$html .= "<a href=\"/\">Return to Backend</a>";
+$html .= "<br /><br /><br />";
 } else {
 
 	$html.=body();
