@@ -83,7 +83,7 @@ else {
 
     if (!is_numeric($entered)) {
         $query = "select upc, description, normal_price, special_price, advertised, scale from products where "
-            . "substring(upc, 1, 7) = '0000000' AND inUse = 1 AND description like '%" . $entered . "%' "
+            . " inUse = 1 AND description like '%" . $entered . "%' "
             . "order by description";
         $boxSize = 15;
     }
