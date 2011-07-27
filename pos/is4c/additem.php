@@ -100,7 +100,7 @@ function addItem($strupc,$strdescription, $strtransType, $strtranssubType, $strt
     }
 
     $intregisterno = $_SESSION["laneno"];
-    $intempno=56;
+    $intempno=$_SESSION["CashierNo"];
     $inttransno = $_SESSION["transno"];
     $strCardNo = $_SESSION["memberID"];
     $memType = $_SESSION["memType"];
