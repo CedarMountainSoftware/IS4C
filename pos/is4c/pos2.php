@@ -160,15 +160,20 @@ if (!function_exists("tenderReport")) include("tenderReport.php");
     if ($entered == "RF1TN") {
         $entered = "stop";
     }
-    elseif (substr($entered, 0, 2) == "RF") {
-        $entered = substr($entered, 2);
+//    elseif (substr($entered, 0, 2) == "RF") {
+    elseif ($entered == "RF") {
+		error_log("refund keyed!");
+		boxMsg("refund not working yet... (press CLEAR)");
+	//	maindisplay("refundscreen.php");
+	//	$intAway = 1;
+/*        $entered = substr($entered, 2);
 
         if (!is_numeric($entered) && !strpos($entered, "*") && !strpos($entered, "DP") ) {
             $entered = "stop";
         }
         else {
             $_SESSION["refund"] = 1;
-        }
+		} */
     }
     if ($entered == "0MI" || $entered == "0.00MI") {
         // Misc Pay-In. Used at the Wedge to tender employee charges
@@ -373,25 +378,25 @@ if (!function_exists("tenderReport")) include("tenderReport.php");
                             . "sum((CASE WHEN trans_type = 'T' THEN -1 * total ELSE 0 END)) AS total "
                             . "FROM localtrans WHERE register_no = " . $_SESSION["laneno"]
                             . " AND emp_no = " . $_SESSION["CashierNo"]
-                            . " GROUP BE register_no, emp_no, trans_no order by 1000 - trans_no";
-                        $db = tDataConnect();
-                        $result = sql_query($query, $db);
-                        $num_rows = sql_num_rows($result);
+							. " GROUP BY register_no, emp_no, trans_no order by 1000 - trans_no";
+						$db = tDataConnect();
+						$result = sql_query($query, $db);
+						$num_rows = sql_num_rows($result);
 
-                        if ($num_rows == 0) {
-                            boxMsg("no receipt found");
-                        }
-                        else {
-                            maindisplay("rplist.php");
-                        }
-                        sql_close($db);
-                    }
-                    break;
-                case "ID":
-                    maindisplay("memsearch.php");
-                    $intAway = 1;
-                    break;
-                case "VD":
+						if ($num_rows == 0) {
+							boxMsg("no receipt found");
+						}
+						else {
+							maindisplay("rplist.php");
+						}
+						sql_close($db);
+					}
+					break;
+				case "ID":
+					maindisplay("memsearch.php");
+					$intAway = 1;
+					break;
+				case "VD":
                     if ($_SESSION["currentid"] == 0) {
                         boxMsg("No Item on Order");
                     }
@@ -420,6 +425,9 @@ if (!function_exists("tenderReport")) include("tenderReport.php");
                         }
                     }
                     break;
+				case "CF":
+					fstoggle($_SESSION["currentid"]);
+					break;
                 case "CL":
                     clearinput();
                     break;

@@ -380,3 +380,34 @@ function timeinterval($date1, $date2) {
     return $interval;
 }
 
+
+function fstoggle ($transid) {
+	if ($transid) {
+		$query = "SELECT foodstamp, description FROM localtemptrans WHERE trans_id = " . $transid;
+
+        $db = tDataConnect();
+        $result = sql_query($query, $db);
+        $num_rows = sql_num_rows($result);
+
+        if ($num_rows == 0) {
+            boxMsg("Item not found");
+        }
+		else {
+            $row = sql_fetch_array($result);
+			$newval = $row['foodstamp'] ? 0 : 1;
+//			$olddesc = $row['description'];
+//			$olddesc = preg_replace("/ \(FS-.*\)/", "", $olddesc);
+//			$newdesc = $olddesc . " (" . ($newval ? "FS-enable":"FS-disable") .  ")";
+//			$update = "update localtemptrans set foodstamp = $newval, description = '" . mysql_real_escape_string($newdesc) . "' where trans_id = " . $transid;
+			$update = "update localtemptrans set foodstamp = $newval where trans_id = " . $transid;
+
+			sql_query($update, $db);
+
+//			$msg = $newval ? "Enabled food stamp elibable" : "Disabled food stamp eligible";
+
+//			boxMsg($msg);
+			clearinput();
+		}
+	}
+
+}
