@@ -31,7 +31,8 @@ function voiditem($item_num) {
         $num_rows = sql_num_rows($result);
 
         if ($num_rows == 0) {
-            boxMsg("Item not found");
+			error_log("voiditem: item not found.  query: $query");
+            boxMsg("Item not found(voiditem:1)");
         }
         else {
             $row = sql_fetch_array($result);
@@ -138,6 +139,9 @@ function voidupc($upc) {
         $weight = $_SESSION["weight"];
     }
 
+	// this is messing up voiding items with UPCs that happen to begin in 002
+	// Removing it from MCFC's branch of the code so items can void ok.
+	/*
     if (is_numeric($upc)) {
         $upc = substr("0000000000000".$upc, -13);
         if (substr($upc, 0, 3) == "002" && substr($upc, -5) != "00000") {
@@ -150,6 +154,7 @@ function voidupc($upc) {
             $deliflag = 1;
 	}
     }
+	 */
 
     if ($upc == "stop") {
         inputUnknown();
@@ -183,7 +188,8 @@ function voidupc($upc) {
         $num_rows = sql_num_rows($result);
 
         if ($num_rows == 0) {
-            boxMsg("Item not found");
+			error_log("voidupc: item not found.  query: $query");
+            boxMsg("Item not found(voidupc:2)");
         }
         else {
             $row = sql_fetch_array($result);
