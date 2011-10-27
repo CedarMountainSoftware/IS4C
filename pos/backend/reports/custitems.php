@@ -39,59 +39,47 @@ $html.='
 </head>
 <body>';
 	
+$link = mysql_connect("localhost", "backend", "is4cbackend");
+if (!$link) {
+	echo "couldn't connect to is4c_op.";
+	exit;
+}
+$success = mysql_select_db('is4c_op', $link);
+
+if (!$success) {
+	echo "Couldn't select op db: " . mysql_error();
+	exit;
+} 
 
 if ($_POST['doreport']) {
 
-	$link = mysql_connect("localhost", "backend", "is4cbackend");
-	if (!$link) {
-		echo "couldn't connect to is4c_op.";
-		exit;
+
+	$saveeditactive = $_REQUEST['saveeditactive'] ? 1 : 0;
+	if ($saveeditactive) {
+		foreach ($_REQUEST as $param => $value) {
+			if (preg_match("/^editupc_(\d+)$/", $param, $matches)) {
+				$thisupc  = $matches[1];
+				$thisactive = $_REQUEST['activecheck_' . $thisupc] ? 1 : 0;
+				$thisprice = $_REQUEST['itemprice_' . $thisupc];
+				// echo "update upc: $thisupc; thisactive = $thisactive, price = $thisprice " .  " <br />\n";
+				
+				$query = "UPDATE products SET inUse = " . $thisactive . ", normal_price = " . mysql_real_escape_string($thisprice) . " WHERE upc = " . mysql_real_escape_string($thisupc);
+				$res = mysql_query($query, $link);
+				if (!$res) {
+					echo "error: " . mysql_error() . "<br />\n";
+				}
+			}
+		}
 	}
-	$success = mysql_select_db('is4c_op', $link);
 
-	if (!$success) {
-		echo "Couldn't select op db: " . mysql_error();
-		exit;
-	} 
 
-/*
- * old (obsolete) hardcoded product categories
-	$sections = array(
-		array("1", 999, "misc"),
-		array("1000", 1099, "grains"),
-		array("1100", 1199, "beans"),
-		array("1200", 1399, "spices"),
-		array("1400", 1499, "teas and herbs"),
-		array("1500", 1599, "flours and baking"),
-		array("1600", 1699, "snacks and candy"),
-		array("1700", 1799, "coffee"),
-		array("1800", 1899, "pastas"),
-		array("1900", 1999, "oils and vinegars (liquids)"),
-		array("2000", 2399, "local packaged grocery and bakery"),
-		array("2400", 2999, "unassigned"),
-		array("3000", 3499, "chill repack cheese"),
-		array("3500", 3599, "bulk or repack nuts and seeds"),
-		array("3600", 3699, "dried fruit"),
-		array("3700", 3799, "bulk or repack olives"),
-		array("3800", 3899, "unassigned"),
-		array("4000", 4999, "conventional produce"),
-		array("5000", 5099, "local frozen"),
-		array("5100", 5999, "unassigned"),
-		array("6000", 6249, "local meats"),
-		array("6250", 6999, "unassigned"),
-		array("7000", 7499, "local teas, and HABA"),
-		array("7500", 7999, "unassigned"),
-		array("8000", 8999, "unassigned"),
-		array("9000", 9999, "local organic or homegrown produce"),
-		array("10000", 98999, "unknown"),
-		array("99000", 99999, "local organic or homegrown produce"),
-	);
-*/
 
 
 	$sections = array();
 
-	$query = "SELECT id, range_start, range_end, title FROM custcategories ORDER BY " . ($_POST['sortorder'] == "numeric" ? "range_start" : " title ") . " ASC";
+	$catwhere = ($_REQUEST['categoryprint'] != 0) ? (" WHERE id = " . $_REQUEST['categoryprint'] ) : "";
+
+	$query = "SELECT id, range_start, range_end, title FROM custcategories $catwhere ORDER BY " . ($_POST['sortorder'] == "numeric" ? "range_start" : " title ") . " ASC";
 	$res = mysql_query($query, $link);
 	if (!$res) {
 		echo "error: " . mysql_error() . "<br />\n";
@@ -101,9 +89,15 @@ if ($_POST['doreport']) {
 		$sections[] = $row;
 	}
 
+	$editactive = $_REQUEST['editactive'] ? 1 : 0;
+
+
 	$sectionitems = array();
 	foreach ($sections as $section) {
-		$query = "SELECT  upc, description from products where upc >= " . $section['range_start'] . " AND upc <= " . $section['range_end'] . " ORDER BY " . ($_POST['sortorder'] == "numeric" ? "upc asc" : "description asc");
+		$query = "SELECT  upc, description, inUse, normal_price from products " .
+			"where upc >= " . $section['range_start'] . " AND upc <= " . $section['range_end'] .
+			(!$editactive ? " AND inUse = 1" : "") .
+			" ORDER BY " . ($_POST['sortorder'] == "numeric" ? "upc asc" : "description asc");
 		$res = mysql_query($query, $link);
 		if (!$res) {
 			echo "error: " . mysql_error() . "<br />\n";
@@ -114,7 +108,7 @@ if ($_POST['doreport']) {
 			$upc = $row['upc'];
 			$desc = $row['description'];
 
-			$custitems[$upc] = $desc;
+			$custitems[$upc] = array("desc" => $desc, "active" => $row['inUse'], "price" => $row['normal_price']);
 		}
 		$sectionitems[] = $custitems;
 	}
@@ -124,9 +118,28 @@ if ($_POST['doreport']) {
 		if (count($sectionitems[$idx]) > 0) {
 			$html .= "<h3>" . $sections[$idx]['title'] . "</h3>";
 
+			if ($editactive) {
+				$html .= startform();
+				$html .= hiddeninput("saveeditactive", 1);
+				$html .= hiddeninput("sortorder", $_REQUEST['sortorder']);
+				$html .= hiddeninput("categoryprint", $_REQUEST['categoryprint']);
+				$html .= hiddeninput("editactive", 1);
+				$html .= hiddeninput("doreport", 1);
+			}
+
 			$custitems = $sectionitems[$idx];
 			$html .= "<table border=\"1\" cellpadding=\"5\" cellspacing=\"5\">";
-			foreach ($custitems as $upc => $desc) {
+
+			if ($editactive) {
+				$html .= "<tr>";
+				$html .= "<th>PLU</th><th>Description</th><th>Active</th><th>Price</th>";
+				$html .= "</tr>";
+			}
+
+			foreach ($custitems as $upc => $data) {
+				$desc = $data['desc'];
+				$isactive = $data['active'];
+				$itemprice = $data['price'];
 				$dispupc = preg_replace("/^0*/", "", $upc);
 				$html .= "<tr>" .
 					"<td align=\"right\">" . 
@@ -135,9 +148,26 @@ if ($_POST['doreport']) {
 					"<td>" .
 					$desc .
 					"</td>".
+					( $editactive ?
+					(
+						"<td>" .
+						hiddeninput("editupc_" . $upc, 1) .
+						checkbox("activecheck_" . $upc, $isactive) .
+						"</td>".
+
+						"<td>" .
+						textbox("itemprice_" . $upc, $itemprice, 7, 15) .
+						"</td>"
+					)
+					:"") .
 					"</tr>";
 			}
 			$html .= "</table>";
+
+			if ($editactive) {
+				$html .= '<input type="submit" value="Save" />';
+				$html .= endform();
+			}
 
 		}
 
@@ -151,9 +181,20 @@ $html .= "<br /><br /><br />";
 
 	$html.=body();
 
+
+	$query = "SELECT id, range_start, range_end, title, showit FROM custcategories ORDER BY range_start ASC ";
+	$res = mysql_query($query, $link);
+	$catselect = array();
+	$catselect[0] = " -- All Categories -- ";
+	while ($row = mysql_fetch_assoc($res)) {
+		$catselect[$row['id']] = $row['title'] . " ( " . $row['range_start'] . ' - ' . $row['range_end'] . " ) ";
+	}
+
 	$html .= startform();
 	$html .= "<table>";
 	$html .= tablerow("Sort order:", selectbox("sortorder", "", array("numeric" => "numeric", "alphabetic" => "alphabetic")));
+	$html .= tablerow("Category: ", selectbox("categoryprint", "", $catselect));
+	$html .= tablerow("Edit Active: ", checkbox("editactive", 0));
 	$html .= hiddeninput("doreport", "1");
 	$html .= "</table>";
 	$html .= '<input type="submit" value="Run Report" />';
