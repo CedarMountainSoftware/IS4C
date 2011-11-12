@@ -63,7 +63,7 @@ if ($_POST['doreport']) {
 				$thisprice = $_REQUEST['itemprice_' . $thisupc];
 				// echo "update upc: $thisupc; thisactive = $thisactive, price = $thisprice " .  " <br />\n";
 				
-				$query = "UPDATE products SET inUse = " . $thisactive . ", normal_price = " . mysql_real_escape_string($thisprice) . " WHERE upc = " . mysql_real_escape_string($thisupc);
+				$query = "UPDATE products SET inUse = " . $thisactive . ",modified = NOW(), normal_price = " . mysql_real_escape_string($thisprice) . " WHERE upc = " . mysql_real_escape_string($thisupc);
 				$res = mysql_query($query, $link);
 				if (!$res) {
 					echo "error: " . mysql_error() . "<br />\n";
