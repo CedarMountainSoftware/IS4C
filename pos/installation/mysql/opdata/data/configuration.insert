@@ -277,14 +277,14 @@ INSERT INTO configuration
     ),
 	(
 		NULL,
-		'no_discount_info'
+		'no_discount_info',
 		'1',
 		'flag',
 		6
 	),
 	(
 		NULL,
-		'ccAddPercent'
+		'ccAddPercent',
 		'0.02',
 		'text',
 		7
