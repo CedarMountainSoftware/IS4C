@@ -13,11 +13,31 @@
 	<body>';
 	
 	$html.=body();
+
+	if ($handle = opendir('./src/images/')) {
+		$images = array();
+
+		while (false !== ($file = readdir($handle))) {
+			if ($file != '.' && $file != '..')
+				$images[] = $file;
+		}
+		closedir();
+
+		error_log("images: " . var_export($images, true));
+
+		$welcomeimage = $images[rand(0, count($images)-1)];;
+	}  else {
+		$welcomeimage = 'wideshot.jpg';
+	}
 	
-	$html.='
-		<div id="page_panel">
-			<img alt="welcome image" src="./src/images/store.png"/> 
-		</div>';
+	$html.=' <div id="page_panel"> ';
+
+	$html .= '<img alt="welcome image" src="./src/images/'. $welcomeimage . '" width="600" /> ';
+
+
+
+
+	$html .='</div>';
 	
 	$html.=foot();
 	
