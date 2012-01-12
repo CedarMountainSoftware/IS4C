@@ -11,7 +11,17 @@
 				$row=mysql_fetch_array($result);
 		
 				// Grab products from server to synchronize
-				$query='SELECT `products`.`upc`, `products`.`description`, `products`.`normal_price`, `products`.`pricemethod`, `products`.`groupprice`, `products`.`quantity`, `products`.`special_price`, `products`.`specialpricemethod`, `products`.`specialgroupprice`, `products`.`specialquantity`, `products`.`start_date`, `products`.`end_date`, `products`.`department`, `products`.`size`, `products`.`tax`, `products`.`foodstamp`, `products`.`scale`, `products`.`mixmatchcode`, `products`.`modified`, `products`.`advertised`, `products`.`tareweight`, `products`.`discount`, `products`.`discounttype`, `products`.`unitofmeasure`, `products`.`wicable`, `products`.`qttyEnforced`, `products`.`inUse`, `products`.`subdept`, `products`.`deposit`, `products`.`id` FROM `is4c_op`.`products` WHERE `products`.`modified`>=\''.$row['datetime'].'\' AND `products`.`inUse`=1';
+				
+				// the following query syncs products with a modification
+				// date more recent than the last sync, which works
+				// fine for only 1 lane, but not so well for 2 lanes
+				// $query='SELECT `products`.`upc`, `products`.`description`, `products`.`normal_price`, `products`.`pricemethod`, `products`.`groupprice`, `products`.`quantity`, `products`.`special_price`, `products`.`specialpricemethod`, `products`.`specialgroupprice`, `products`.`specialquantity`, `products`.`start_date`, `products`.`end_date`, `products`.`department`, `products`.`size`, `products`.`tax`, `products`.`foodstamp`, `products`.`scale`, `products`.`mixmatchcode`, `products`.`modified`, `products`.`advertised`, `products`.`tareweight`, `products`.`discount`, `products`.`discounttype`, `products`.`unitofmeasure`, `products`.`wicable`, `products`.`qttyEnforced`, `products`.`inUse`, `products`.`subdept`, `products`.`deposit`, `products`.`id` FROM `is4c_op`.`products` WHERE `products`.`modified`>=\''.$row['datetime'].'\' AND `products`.`inUse`=1';
+				
+				// modified query to sync all products regardless of modification time
+				// 1-11-2012:  modified again to also sync products that are not
+				// in use... otherwise, deactivating them doesn't update
+				// their status on the lane (doh!)
+				$query='SELECT `products`.`upc`, `products`.`description`, `products`.`normal_price`, `products`.`pricemethod`, `products`.`groupprice`, `products`.`quantity`, `products`.`special_price`, `products`.`specialpricemethod`, `products`.`specialgroupprice`, `products`.`specialquantity`, `products`.`start_date`, `products`.`end_date`, `products`.`department`, `products`.`size`, `products`.`tax`, `products`.`foodstamp`, `products`.`scale`, `products`.`mixmatchcode`, `products`.`modified`, `products`.`advertised`, `products`.`tareweight`, `products`.`discount`, `products`.`discounttype`, `products`.`unitofmeasure`, `products`.`wicable`, `products`.`qttyEnforced`, `products`.`inUse`, `products`.`subdept`, `products`.`deposit`, `products`.`id` FROM `is4c_op`.`products`';
 				$result=mysql_query($query, $link);
 				if ($result) {
 					if (mysql_num_rows($result)>0) {
