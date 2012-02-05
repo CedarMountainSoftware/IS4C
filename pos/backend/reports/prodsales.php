@@ -91,12 +91,13 @@ if (isset($_POST['submit'])) {
 	} */
 
 	$ourwhere = "";
+	$ourwhere .= " trans_status <> 'D' AND trans_status <> 'X' ";
 	if ($startdate && $enddate) {
-		$ourwhere = " tdate >= '" . mysql_real_escape_string($startdate) . "' AND tdate <= '" . mysql_real_escape_string($enddate) . "'";
+		$ourwhere .= " AND `datetime` >= '" . mysql_real_escape_string($startdate) . " 00:00:00' AND `datetime` <= '" . mysql_real_escape_string($enddate) . " 23:59:59'";
 	}
+	$query = "SELECT di.upc AS upcnum, count(di.upc) AS cnt, prod.description AS proddesc, vendor_name, ccat.title AS custcattitle FROM dtransactions di LEFT JOIN is4c_op.products prod ON di.upc = prod.upc LEFT JOIN is4c_op.vendors vend ON prod.vendor_id = vend.vendor_id LEFT JOIN is4c_op.custcategories ccat ON di.upc >= range_start AND di.upc <= range_end AND showit = true WHERE " . $ourwhere . " AND prod.description IS NOT NULL group by di.upc order by vendor_name DESC, ccat.title ASC, prod.description ASC";
 
-	$query = "SELECT DISTINCT upc AS upcnum, (SELECT count(upc) FROM dlog di WHERE di.upc = upcnum " . ( $ourwhere ? "AND $ourwhere" : "") . ") AS cnt FROM dlog " . ($ourwhere ? "WHERE $ourwhere" : "");
-//	echo $query . "<br \>\n";
+	error_log("prodsales.php running query: " . $query);
 	$res = mysql_query($query, $link);
 	if (!$res) {
 		echo "error: " . mysql_error() . "<br />\n";
@@ -110,27 +111,46 @@ if (isset($_POST['submit'])) {
 		$html .= "<h3>All Records</h3>";
 	}
 
+	$firstvendor = true;
+	$firstcat = true;
 	
 	$html .= "<table >";
-	$html .= "<tr><th>UPC</th><th>Product</th><th>Sales</th></tr>";
+	// $html .= '<tr><th align="left">UPC</th><th align="left">Product</th><th align="left">Sales</th><th align="left">Vendor</th><th align="left">Category</th></tr>';
 	while ($row = mysql_fetch_assoc($res)) {
+		error_log("got row: " . var_export($row, true));
+
 		$upc = $row['upcnum'];
 		$cnt = $row['cnt'];
+		$description = $row['proddesc'];
+		$vendor = $row['vendor_name'];
+		$custcat = $row['custcattitle'];
+
+		
+		if ($vendor != $lastvendor || $firstvendor) {
+			if ($vendor != "")
+				$html .= "<tr><td colspan=\"4\" align=\"center\"><b>$vendor</b></td></tr>";
+			else 
+				$html .= "<tr><td colspan=\"4\" align=\"center\"><b>UNKNOWN VENDOR</b></td></tr>";
+
+			$html .= '<tr><th align="left">UPC</th><th align="left">Product</th><th align="left">Sales</th><th align="left">Vendor</th></tr>';
+			$firstvendor = false;
+			$firstcat = true;
+			$lastcustcat = "";
+		}
+
+		if ($custcat != "" && ($custcat != $lastcustcat || $firstcat)) {
+			$html .= "<tr><td colspan=\"4\" align=\"left\"><b>$custcat</b></td></tr>";
+			$firstcat = false;
+		}
+
+
 
 		if (is_numeric($upc)) {
-			$q2 = "SELECT is4c_op.products.description FROM is4c_op.products WHERE upc = " . $upc;
-			$res2 = mysql_query($q2, $link);
-			if (!$res2) {
-				echo "error: " . mysql_error() . "<br />\n";
-			}
-
-			if ($row2 = mysql_fetch_assoc($res2)) {
-				$description = $row2['description'];
-				$html .= tablerow($upc, $description, $cnt);
-			} else {
-				$html .= tablerow($upc, "[product not found]", $cnt);
-			}
+			$html .= tablerow($upc, $description, $cnt, $vendor);
 		}
+
+		$lastvendor = $vendor;
+		$lastcustcat = $custcat;
 	}
 
 	$html .= "</table>";

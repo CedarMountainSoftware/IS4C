@@ -75,9 +75,27 @@ if ($_POST['doreport']) {
 
 
 
-	$sections = array();
 
 	$catwhere = ($_REQUEST['categoryprint'] != 0) ? (" WHERE id = " . $_REQUEST['categoryprint'] ) : "";
+	$vendorwhere = ($_REQUEST['vendor'] != 0) ? (" WHERE vendor_id = " . $_REQUEST['vendor'] ) : "";
+
+
+	$query = "SELECT vendor_id, vendor_name FROM vendors $vendorwhere ORDER BY vendor_name DESC";
+	$res = mysql_query($query, $link);
+	if (!$res) {
+		echo "error: " . mysql_error() . "<br />\n";
+	}
+	$vendors = array();
+	while ($row = mysql_fetch_assoc($res)) {
+		$vendors[$row['vendor_id']] = $row['vendor_name'];
+	}
+	// hardcode  unknown vendor (null) index, hopefully we'll never get to 10000 vendors
+	if ($_REQUEST['vendor'] == 0 || $_REQUEST['vendor'] == 9999)
+		$vendors[9999] = " [ unknown vendor ] ";
+
+
+
+	$sections = array();
 
 	$query = "SELECT id, range_start, range_end, title FROM custcategories $catwhere ORDER BY " . ($_POST['sortorder'] == "numeric" ? "range_start" : " title ") . " ASC";
 	$res = mysql_query($query, $link);
@@ -92,85 +110,105 @@ if ($_POST['doreport']) {
 	$editactive = $_REQUEST['editactive'] ? 1 : 0;
 
 
-	$sectionitems = array();
-	foreach ($sections as $section) {
-		$query = "SELECT  upc, description, inUse, normal_price from products " .
-			"where upc >= " . $section['range_start'] . " AND upc <= " . $section['range_end'] .
-			(!$editactive ? " AND inUse = 1" : "") .
-			" ORDER BY " . ($_POST['sortorder'] == "numeric" ? "upc asc" : "description asc");
-		$res = mysql_query($query, $link);
-		if (!$res) {
-			echo "error: " . mysql_error() . "<br />\n";
-		}
+	foreach ($vendors as $vendor_id => $vendor_name) {
 
-		$custitems = array();
-		while ($row = mysql_fetch_assoc($res)) {
-			$upc = $row['upc'];
-			$desc = $row['description'];
 
-			$custitems[$upc] = array("desc" => $desc, "active" => $row['inUse'], "price" => $row['normal_price']);
-		}
-		$sectionitems[] = $custitems;
-	}
-
-	$html .= "<h2>Custom Item PLU Codes</h2>";
-	for ($idx = 0; $idx < count($sections); $idx++) {
-		if (count($sectionitems[$idx]) > 0) {
-			$html .= "<h3>" . $sections[$idx]['title'] . "</h3>";
-
-			if ($editactive) {
-				$html .= startform();
-				$html .= hiddeninput("saveeditactive", 1);
-				$html .= hiddeninput("sortorder", $_REQUEST['sortorder']);
-				$html .= hiddeninput("categoryprint", $_REQUEST['categoryprint']);
-				$html .= hiddeninput("editactive", 1);
-				$html .= hiddeninput("doreport", 1);
+		$sectionitems = array();
+		foreach ($sections as $section) {
+			$query = "SELECT  upc, description, inUse, normal_price from products " .
+				"where upc >= " . $section['range_start'] . " AND upc <= " . $section['range_end'] .
+				(!$editactive ? " AND inUse = 1" : "") . ($vendor_id != 9999 ? " AND vendor_id = " . $vendor_id : " AND vendor_id IS NULL") .
+				" ORDER BY " . ($_POST['sortorder'] == "numeric" ? "upc asc" : "description asc");
+			$res = mysql_query($query, $link);
+			if (!$res) {
+				echo "error: " . mysql_error() . "<br />\n";
 			}
 
-			$custitems = $sectionitems[$idx];
-			$html .= "<table border=\"1\" cellpadding=\"5\" cellspacing=\"5\">";
+			$custitems = array();
+			while ($row = mysql_fetch_assoc($res)) {
+				$upc = $row['upc'];
+				$desc = $row['description'];
 
-			if ($editactive) {
-				$html .= "<tr>";
-				$html .= "<th>PLU</th><th>Description</th><th>Active</th><th>Price</th>";
-				$html .= "</tr>";
+				$custitems[$upc] = array("desc" => $desc, "active" => $row['inUse'], "price" => $row['normal_price']);
 			}
+			$sectionitems[] = $custitems;
+		}
 
-			foreach ($custitems as $upc => $data) {
-				$desc = $data['desc'];
-				$isactive = $data['active'];
-				$itemprice = $data['price'];
-				$dispupc = preg_replace("/^0*/", "", $upc);
-				$html .= "<tr>" .
-					"<td align=\"right\">" . 
-					"<a href=\"/item/?a=search&q=".$upc."&t=upc\" style=\"text-decoration: none; color: black\">$dispupc</a>".
-					"</td>" .
-					"<td>" .
-					$desc .
-					"</td>".
-					( $editactive ?
-					(
+		// make sure vendor has items before header is printed
+		$vendorhasitems = false;
+		for ($idx = 0; $idx < count($sections); $idx++) {
+			if (count($sectionitems[$idx]) > 0) {
+				$vendorhasitems = true;
+			}
+		}
+
+		if ($vendorhasitems) 
+			$html .= "<h2>Custom Item PLU Codes: $vendor_name</h2>";
+		else {
+			if ($_REQUEST['vendor'])
+				$html .= "<h2>No custom items found for vendor: $vendor_name</h2>";
+		}
+
+
+		for ($idx = 0; $idx < count($sections); $idx++) {
+			if (count($sectionitems[$idx]) > 0) {
+				$html .= "<h3>" . $sections[$idx]['title'] . "</h3>";
+
+				if ($editactive) {
+					$html .= startform();
+					$html .= hiddeninput("saveeditactive", 1);
+					$html .= hiddeninput("sortorder", $_REQUEST['sortorder']);
+					$html .= hiddeninput("categoryprint", $_REQUEST['categoryprint']);
+					$html .= hiddeninput("vendor", $_REQUEST['vendor']);
+					$html .= hiddeninput("editactive", 1);
+					$html .= hiddeninput("doreport", 1);
+				}
+
+				$custitems = $sectionitems[$idx];
+				$html .= "<table border=\"1\" cellpadding=\"5\" cellspacing=\"5\">";
+
+				if ($editactive) {
+					$html .= "<tr>";
+					$html .= "<th>PLU</th><th>Description</th><th>Active</th><th>Price</th>";
+					$html .= "</tr>";
+				}
+
+				foreach ($custitems as $upc => $data) {
+					$desc = $data['desc'];
+					$isactive = $data['active'];
+					$itemprice = $data['price'];
+					$dispupc = preg_replace("/^0*/", "", $upc);
+					$html .= "<tr>" .
+						"<td align=\"right\">" . 
+						"<a href=\"/item/?a=search&q=".$upc."&t=upc\" style=\"text-decoration: none; color: black\">$dispupc</a>".
+						"</td>" .
 						"<td>" .
-						hiddeninput("editupc_" . $upc, 1) .
-						checkbox("activecheck_" . $upc, $isactive) .
+						$desc .
 						"</td>".
+						( $editactive ?
+						(
+							"<td>" .
+							hiddeninput("editupc_" . $upc, 1) .
+							checkbox("activecheck_" . $upc, $isactive) .
+							"</td>".
 
-						"<td>" .
-						textbox("itemprice_" . $upc, $itemprice, 7, 15) .
-						"</td>"
-					)
-					:"") .
-					"</tr>";
-			}
-			$html .= "</table>";
+							"<td>" .
+							textbox("itemprice_" . $upc, $itemprice, 7, 15) .
+							"</td>"
+						)
+						:"") .
+						"</tr>";
+				}
+				$html .= "</table>";
 
-			if ($editactive) {
-				$html .= '<input type="submit" value="Save" />';
-				$html .= endform();
+				if ($editactive) {
+					$html .= '<input type="submit" value="Save" />';
+					$html .= endform();
+				}
+
 			}
 
 		}
-
 	}
 
 
@@ -190,9 +228,19 @@ $html .= "<br /><br /><br />";
 		$catselect[$row['id']] = $row['title'] . " ( " . $row['range_start'] . ' - ' . $row['range_end'] . " ) ";
 	}
 
+	$query = "SELECT vendor_id, vendor_name FROM vendors ORDER BY vendor_name ASC ";
+	$res = mysql_query($query, $link);
+	$vendorselect = array();
+	$vendorselect[0] = " -- All Vendors -- ";
+	while ($row = mysql_fetch_assoc($res)) {
+		$vendorselect[$row['vendor_id']] = $row['vendor_name'];
+	}
+	$vendorselect [ 9999 ] = " [ unknown vendor ] ";
+
 	$html .= startform();
 	$html .= "<table>";
 	$html .= tablerow("Sort order:", selectbox("sortorder", "", array("numeric" => "numeric", "alphabetic" => "alphabetic")));
+	$html .= tablerow("Vendor: ", selectbox("vendor", "", $vendorselect));
 	$html .= tablerow("Category: ", selectbox("categoryprint", "", $catselect));
 	$html .= tablerow("Edit Active: ", checkbox("editactive", 0));
 	$html .= hiddeninput("doreport", "1");
