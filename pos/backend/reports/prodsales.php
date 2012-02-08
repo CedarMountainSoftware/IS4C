@@ -95,7 +95,7 @@ if (isset($_POST['submit'])) {
 	if ($startdate && $enddate) {
 		$ourwhere .= " AND `datetime` >= '" . mysql_real_escape_string($startdate) . " 00:00:00' AND `datetime` <= '" . mysql_real_escape_string($enddate) . " 23:59:59'";
 	}
-	$query = "SELECT di.upc AS upcnum, count(di.upc) AS cnt, prod.description AS proddesc, vendor_name, ccat.title AS custcattitle FROM dtransactions di LEFT JOIN is4c_op.products prod ON di.upc = prod.upc LEFT JOIN is4c_op.vendors vend ON prod.vendor_id = vend.vendor_id LEFT JOIN is4c_op.custcategories ccat ON di.upc >= range_start AND di.upc <= range_end AND showit = true WHERE " . $ourwhere . " AND prod.description IS NOT NULL group by di.upc order by vendor_name DESC, ccat.title ASC, prod.description ASC";
+	$query = "SELECT di.upc AS upcnum, sum(di.quantity) AS cnt, prod.description AS proddesc, vendor_name, ccat.title AS custcattitle FROM dtransactions di LEFT JOIN is4c_op.products prod ON di.upc = prod.upc LEFT JOIN is4c_op.vendors vend ON prod.vendor_id = vend.vendor_id LEFT JOIN is4c_op.custcategories ccat ON di.upc >= range_start AND di.upc <= range_end AND showit = true WHERE " . $ourwhere . " AND prod.description IS NOT NULL group by di.upc order by vendor_name DESC, ccat.title ASC, prod.description ASC";
 
 	error_log("prodsales.php running query: " . $query);
 	$res = mysql_query($query, $link);
