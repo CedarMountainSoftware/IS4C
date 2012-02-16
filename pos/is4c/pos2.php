@@ -160,12 +160,11 @@ if (!function_exists("tenderReport")) include("tenderReport.php");
     if ($entered == "RF1TN") {
         $entered = "stop";
     }
-//    elseif (substr($entered, 0, 2) == "RF") {
     elseif ($entered == "RF") {
 		error_log("refund keyed!");
-		boxMsg("refund not working yet... (press CLEAR)");
-	//	maindisplay("refundscreen.php");
-	//	$intAway = 1;
+		// boxMsg("refund not working yet... (press CLEAR)");
+		maindisplay("refundscreen.php");
+		$intAway = 1;
 /*        $entered = substr($entered, 2);
 
         if (!is_numeric($entered) && !strpos($entered, "*") && !strpos($entered, "DP") ) {
