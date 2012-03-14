@@ -190,6 +190,7 @@ $html .= "<br /><br /><br />";
 		$catselect[$row['id']] = $row['title'] . " ( " . $row['range_start'] . ' - ' . $row['range_end'] . " ) ";
 	}
 
+	$html .= "<h2>Custom Items Report</h2>";
 	$html .= startform();
 	$html .= "<table>";
 	$html .= tablerow("Sort order:", selectbox("sortorder", "", array("numeric" => "numeric", "alphabetic" => "alphabetic")));

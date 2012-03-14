@@ -26,34 +26,17 @@ require_once('../src/htmlparts.php');
 require_once('../src/misc.inc');
 
 $page_title = "Reporting";
-$header = "Product Sales Report";
+$header = "Active Items Report";
 // include ('../src/header.html');
 
 $html='<!DOCTYPE HTML>
 <html>
 <head>';
-
-$html .= '<script type="text/javascript" src="../lib/jquery.js"></script>';
-$html .= '<script type="text/javascript" src="../lib/jquery-ui.js"></script>';
-$html .= <<<SCRIPT
-<script language="Javascript">
-$(document).ready(function() {
-	$('#startdate').datepicker({dateFormat: 'yy-mm-dd'});
-	$('#enddate').datepicker({dateFormat: 'yy-mm-dd'});
-});
-
-</script>
-
-<link type="text/css" rel="stylesheet" href="../lib/jquery-ui.css" />
-
-SCRIPT;
 	
 $html.=head();
 	
-// $html .= '<script src="../src/CalendarControl.js" language="javascript"></script>';
-
 $html.='
-	<title>IS4C - Product Sales</title>
+	<title>IS4C - Active Items</title>
 </head>
 <body>';
 	
@@ -64,8 +47,6 @@ if (isset($_POST['submit'])) {
 	// do report
 	// show how many of each product sold within given dates
 	// dlog.upc
-	$startdate = $_REQUEST['startdate'];
-	$enddate = $_REQUEST['enddate'];
 	$csvexport = $_REQUEST['csvexport'] ? 1 : 0;
 
 	$csvdata = array();
@@ -95,36 +76,25 @@ if (isset($_POST['submit'])) {
 	} */
 
 	$ourwhere = "";
-	$ourwhere .= " trans_status <> 'D' AND trans_status <> 'X' ";
-	if ($startdate && $enddate) {
-		$ourwhere .= " AND `datetime` >= '" . mysql_real_escape_string($startdate) . " 00:00:00' AND `datetime` <= '" . mysql_real_escape_string($enddate) . " 23:59:59'";
-	}
-	$query = "SELECT di.upc AS upcnum, sum(di.quantity) AS cnt, prod.description AS proddesc, dept_name, vendor_name, ccat.title AS custcattitle FROM dtransactions di LEFT JOIN is4c_op.products prod ON di.upc = prod.upc LEFT JOIN is4c_op.departments ON prod.department = departments.dept_no LEFT JOIN is4c_op.vendors vend ON prod.vendor_id = vend.vendor_id LEFT JOIN is4c_op.custcategories ccat ON di.upc >= range_start AND di.upc <= range_end AND showit = true WHERE " . $ourwhere . " AND prod.description IS NOT NULL group by di.upc order by vendor_name DESC, ccat.title ASC, prod.description ASC";
+	$query = "SELECT prod.upc AS upcnum, prod.description AS proddesc, dept_name, vendor_name, ccat.title AS custcattitle FROM is4c_op.products prod LEFT JOIN is4c_op.departments ON prod.department = departments.dept_no LEFT JOIN is4c_op.vendors vend ON prod.vendor_id = vend.vendor_id LEFT JOIN is4c_op.custcategories ccat ON prod.upc >= range_start AND prod.upc <= range_end AND showit = true WHERE inUse = 1 AND prod.description IS NOT NULL group by prod.upc order by vendor_name DESC, ccat.title ASC, prod.description ASC";
 
-	error_log("prodsales.php running query: " . $query);
 	$res = mysql_query($query, $link);
 	if (!$res) {
 		echo "error: " . mysql_error() . "<br />\n";
 	}
 
-	$html .= "<h2>Product Sales Report</h2>";
+	$html .= "<h2>Active Items Report</h2>";
 
-	if ($startdate && $enddate) {
-		$html .= "<h3>$startdate - $enddate</h3>";
-	} else {
-		$html .= "<h3>All Records</h3>";
-	}
+	$html .= "<h3>All Records</h3>";
 
 	$firstvendor = true;
 	$firstcat = true;
 	
 	$html .= "<table >";
-	// $html .= '<tr><th align="left">UPC</th><th align="left">Product</th><th align="left">Sales</th><th align="left">Vendor</th><th align="left">Category</th></tr>';
 	while ($row = mysql_fetch_assoc($res)) {
 		error_log("got row: " . var_export($row, true));
 
 		$upc = $row['upcnum'];
-		$cnt = $row['cnt'];
 		$description = $row['proddesc'];
 		$vendor = $row['vendor_name'];
 		$custcat = $row['custcattitle'];
@@ -137,7 +107,7 @@ if (isset($_POST['submit'])) {
 			else 
 				$html .= "<tr><td colspan=\"4\" align=\"center\"><b>UNKNOWN VENDOR</b></td></tr>";
 
-			$html .= '<tr><th align="left">UPC</th><th align="left">Product</th><th align="left">Sales</th><th align="left">Department</th><th align="left">Vendor</th></tr>';
+			$html .= '<tr><th align="left">UPC</th><th align="left">Product</th><th align="left">Department</th><th align="left">Vendor</th></tr>';
 			$firstvendor = false;
 			$firstcat = true;
 			$lastcustcat = "";
@@ -149,12 +119,11 @@ if (isset($_POST['submit'])) {
 		}
 
 
-
 		if (is_numeric($upc)) {
 			if (!$csvexport)
-				$html .= tablerow($upc, $description, $cnt, $dept, $vendor);
+				$html .= tablerow($upc, $description, $dept, $vendor);
 			else
-				$csvdata[] = array($upc, $description, $cnt, $dept, $vendor);
+				$csvdata[] = array($upc, $description, $dept, $vendor);
 		}
 
 		$lastvendor = $vendor;
@@ -162,7 +131,7 @@ if (isset($_POST['submit'])) {
 	}
 
 	if ($csvexport) {
-		$filename = "product_sales_report_" . $startdate . '_to_' . $enddate . ".csv";
+		$filename = "active_items_report.csv";
 		export_csv($filename, $csvdata);
 		exit;
 	}
@@ -170,10 +139,9 @@ if (isset($_POST['submit'])) {
 	$html .= "</table>";
 
 } else {
+	$html .= "<h2>Active Items Report</h2>";
 	$html .= startform();
 	$html .= "<table>";
-	$html .= tablerow("Start Date :", textbox("startdate", "", "14", "20", array("onclick" => "showCalendarControl(this)")). " (YYYY-MM-DD)");
-	$html .= tablerow("End Date :", textbox("enddate", "", "14", "20", array("onclick" => "showCalendarControl(this)")). " (YYYY-MM-DD)");
 	$html .= tablerow("<label for=\"csvexport\">CSV Export</label>: " , checkbox("csvexport", 0));
 	$html .= hiddeninput("submit", "1");
 	$html .= "</table>";
