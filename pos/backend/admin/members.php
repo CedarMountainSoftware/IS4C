@@ -36,12 +36,15 @@
 		$jobtitle = $_REQUEST['jobtitle'];
 		$cashierpassword = $_REQUEST['cashierpassword'];
 		$active = $_REQUEST['active'] ? 1 : 0;
+		$addshopper = $_REQUEST['addshopper'] ? 1 : 0;
+		$sponsorcardno = $_REQUEST['sponsorcardno'];
+
 
 		if ($action == "add") {
-			$query = "INSERT INTO members (CardNo, FirstName, LastName, CashierPassword, AdminPassword, JobTitle, Active) VALUES (".db_quote($cardno) . "," . db_quote($firstname) . "," . db_quote($lastname) . "," . db_quote($cashierpassword) . "," . db_quote($cashierpassword) . "," . db_quote($jobtitle) . "," . db_quote($active) .")";
+			$query = "INSERT INTO members (CardNo, FirstName, LastName, CashierPassword, AdminPassword, JobTitle, Active, addshopper, sponsorCardNo) VALUES (".db_quote($cardno) . "," . db_quote($firstname) . "," . db_quote($lastname) . "," . db_quote($cashierpassword) . "," . db_quote($cashierpassword) . "," . db_quote($jobtitle) . "," . db_quote($active) . "," . db_quote($addshopper) . "," . db_quote($sponsorcardno) .")";
 		} else if ($action == "edit") {
 			$id = $_REQUEST['id'];
-			$query = "UPDATE members SET CardNo = " . db_quote($cardno) . ", FirstName = " . db_quote($firstname) . ", LastName = " . db_quote($lastname) . ", CashierPassword = " . db_quote($cashierpassword) . ", AdminPassword = " . db_quote($adminpassword) . ", JobTitle = " . db_quote($jobtitle) . ", Active = " . db_quote($active) . " WHERE id = " . $id;
+			$query = "UPDATE members SET CardNo = " . db_quote($cardno) . ", FirstName = " . db_quote($firstname) . ", LastName = " . db_quote($lastname) . ", CashierPassword = " . db_quote($cashierpassword) . ", AdminPassword = " . db_quote($adminpassword) . ", JobTitle = " . db_quote($jobtitle) . ", Active = " . db_quote($active) . ", addshopper = " . db_quote($addshopper) . ", sponsorCardNo = " . ($addshopper ? db_quote($sponsorcardno) : "NULL")  . " WHERE id = " . $id;
 		}
 
 		$res = mysql_query($query, $link);
@@ -65,7 +68,7 @@
 
 			case "edit":
 				$id = $_REQUEST['id'];
-				$query = "SELECT CardNo, FirstName, LastName, CashierPassword, AdminPassword, JobTitle, Active FROM members WHERE id = '" . mysql_real_escape_string($id) . "'";
+				$query = "SELECT CardNo, FirstName, LastName, CashierPassword, AdminPassword, JobTitle, Active, addshopper, sponsorCardNo FROM members WHERE id = '" . mysql_real_escape_string($id) . "'";
 				$res = mysql_query($query, $link);
 				if ($row = mysql_fetch_assoc($res)) {
 					$cardno = $row['CardNo'];
@@ -74,6 +77,8 @@
 					$cashierpassword = $row['CashierPassword'];
 					$jobtitle = $row['JobTitle'];
 					$active = $row['Active'] ? 1 : 0;
+					$addshopper = $row['addshopper'];
+					$sponsorcardno = $row['sponsorCardNo'];
 				}
 
 			case "add":
@@ -91,6 +96,8 @@
 				$html .= tablerow("Job Title", textbox("jobtitle", $jobtitle, 20, 30));
 				if ($action == "add") $active = 1; // default to active for new additions
 				$html .= tablerow("Active", checkbox("active", $active));
+				$html .= tablerow("Additional Shopper", checkbox("addshopper", $addshopper));
+				$html .= tablerow("Sponsor Card No:", textbox("sponsorcardno", $sponsorcardno, 6, 8));
 				$html .= "</table>";
 				$html .= submitbox("Save", "Save");
 				break;
@@ -101,8 +108,8 @@
 			case "list":
 			default:
 				$html .= "<table cellspacing=\"5\">";
-				$html .= tableheaderrow("CardNo", "First Name", "Last Name", "Job Title", "Active", "");
-				$query = "SELECT id, CardNo, FirstName, LastName, CashierPassword, AdminPassword, JobTitle, Active FROM members ORDER BY LastName ASC";
+				$html .= tableheaderrow("CardNo", "First Name", "Last Name", "Job Title", "Active", "Additional Shopper?", "");
+				$query = "SELECT members.id, members.CardNo, members.FirstName, members.LastName, members.CashierPassword, members.AdminPassword, members.JobTitle, members.Active, members.addshopper, members.sponsorCardNo, addmems.FirstName as sponsfirst, addmems.LastName as sponslast FROM members LEFT JOIN members addmems ON (addmems.CardNo = members.sponsorCardNo) ORDER BY LastName ASC";
 				$res = mysql_query($query, $link);
 				while ($row = mysql_fetch_assoc($res)) {
 					$html .= tablerow(
@@ -111,6 +118,7 @@
 						$row['LastName'],
 						$row['JobTitle'],
 						$row['Active'] ? "Yes" : "No",
+						$row['addshopper'] ? ("Yes (" . $row['sponsorCardNo'] . ": " . $row['sponsfirst'] . ' ' . $row['sponslast'] . ")") : "",
 						'<a href="members.php?action=delete&id='.$row['id'].'">' . "Delete" . '</a>'
 						);
 				}
