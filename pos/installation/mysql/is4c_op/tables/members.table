@@ -32,6 +32,10 @@ CREATE TABLE `members` (
   `frontendsecurity` smallint(6) default NULL comment 'Defines the front-end security available to the user.',
   `backendsecurity` smallint(6) default NULL comment 'Defines the front-end security available to the user.',
 
+	addshopper boolean default 0 comment 'indicates whether the member is an additional shopper',
+	sponsorCardNo int default null comment 'for an additional member (addshopper=1) this is the CardNo of the sponsor member',
+	
+
   `id` int(11) NOT NULL auto_increment,
   PRIMARY KEY  (`id`),
   KEY `CardNo` (`CardNo`),
