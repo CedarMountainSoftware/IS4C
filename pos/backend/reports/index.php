@@ -22,6 +22,8 @@
 				<li><a href="custitems.php">Custom Items Report</a> --- (<a href="../admin/custcategories.php">Edit Custom Categories</a>)</li>
 
 				<li><a href="activeitems.php">Active Items</a></li>
+
+				<li><a href="purchases.php">Member Purchases Report</a></li>
 			</ul>
 		</div>';
 	

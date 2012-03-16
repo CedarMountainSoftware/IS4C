@@ -164,20 +164,20 @@ if (isset($_POST['submit'])) {
 
 	$html .= "<h3>Totals:</h3>";
 
-	$html .= "Cash: " . cashformat($ca_total);
+	$html .= "Cash: " . '$'.cashformat($ca_total);
 	$html .= "&nbsp;&nbsp;&nbsp;&nbsp;";
-	$html .= "Check: " . cashformat($ck_total);
+	$html .= "Check: " . '$'.cashformat($ck_total);
 	$html .= "&nbsp;&nbsp;&nbsp;&nbsp;";
-	$html .= "Credit: " . cashformat($cc_total);
+	$html .= "Credit: " . '$'.cashformat($cc_total);
 	$html .= "&nbsp;&nbsp;&nbsp;&nbsp;";
-	$html .= "EBT: " . cashformat($fs_total);
+	$html .= "EBT: " . '$'.cashformat($fs_total);
 	$html .= "<br />";
 
 
 
-	$html .= "Full Members: ". cashformat($fm_total);
+	$html .= "Full Members: ". '$'.cashformat($fm_total);
 	$html .= "&nbsp;&nbsp;&nbsp;&nbsp;";
-	$html .= "Sponsored Shoppers: ". cashformat($as_total);
+	$html .= "Sponsored Shoppers: ". '$'.cashformat($as_total);
 	$html .= "<br />";
 
 	$html .= "<h3>Transactions:</h3>";
