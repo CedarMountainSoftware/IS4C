@@ -30,5 +30,9 @@ function export_csv($filename, $data) {
 	exit;
 }
 
+function cashformat ($amount) {
+	return number_format($amount, 2);
+}
+
 
 ?>
