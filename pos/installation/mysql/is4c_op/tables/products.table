@@ -41,3 +41,6 @@ CREATE TABLE `products` (
   KEY `description` (`description`),
   KEY `normal_price` (`normal_price`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+alter table products add constraint unique key (upc);
+
