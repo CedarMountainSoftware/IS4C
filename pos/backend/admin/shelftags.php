@@ -189,7 +189,7 @@ if (isset($_POST['submitted'])) {
                   if(u.upc IS NULL,'',u.upc) as upc,  
                   if(u.units IS NULL,'',u.units) as units,  
                   if(u.cost IS NULL,'',u.cost) as cost,  
-                  if(p.description IS NULL, substring(u.description,1,23),substring(p.description,1,23)) as description,   
+                  if(p.description IS NULL, substring(u.description,1,50),substring(p.description,1,50)) as description,   
                   right(p.upc,12) as pid,   
                   if(u.upc IS NULL, 'Misc', 'UNFI') as vendor, 
                   ROUND(normal_price,2) AS normal_price,
@@ -221,7 +221,8 @@ if (isset($_POST['submitted'])) {
   $pdf->SetMargins($left ,$top + $hspace);
   $pdf->SetAutoPageBreak('off',0);
   $pdf->AddPage('P');
-  $pdf->SetFont('Arial','',10);
+//  $pdf->SetFont('Arial','',10);
+  $pdf->SetFont('Arial','',9);
   
   /**
    * set up location variable starts
@@ -229,8 +230,9 @@ if (isset($_POST['submitted'])) {
    
   $barLeft = $left + 4;
   $descTop = $top + $hspace;
+  $desc2Top = $descTop + 2.6;
   $barTop = $descTop + 16;
-  $priceTop = $descTop + 4;
+  $priceTop = $descTop + 4.5;
   $labelCount = 0;
   $brandTop = $descTop + 4;
   $sizeTop = $descTop + 8;
@@ -255,9 +257,10 @@ if (isset($_POST['submitted'])) {
      if($labelCount == 32){
         $pdf->AddPage('P');
       $descTop = $top + $hspace;
+	  $desc2Top = $descTop + 2.6;
       $barLeft = $left + 4;
       $barTop = $descTop + 16;
-      $priceTop = $descTop + 4;
+      $priceTop = $descTop + 4.5;
       $priceLeft = ($w / 2) + ($space);
       $labelCount = 0;
       $brandTop = $descTop + 4;
@@ -278,6 +281,7 @@ if (isset($_POST['submitted'])) {
         $priceLeft = ($w / 2) + ($space);
         $priceTop = $priceTop + $down;
         $descTop = $descTop + $down;
+        $desc2Top = $desc2Top + $down;
         $brandTop = $brandTop + $down;
         $sizeTop = $sizeTop + $down;
         $genLeft = $left;
@@ -291,7 +295,18 @@ if (isset($_POST['submitted'])) {
    */
      if ($row['scale'] == 0) {$price = $row['normal_price'];}
      elseif ($row['scale'] == 1) {$price = $row['normal_price'] . "/lb";}
-     $desc = strtoupper(substr($row['description'],0,27));
+	 $description = strtoupper($row['description']);
+	 if (strlen($description) > 25) {
+		 $desc1 = substr($description, 0, 25);
+		 $spaceidx = strrpos($desc1, " ");
+		 $desc1 = substr($desc1, 0, $spaceidx);
+		 $desc2 = substr($description, $spaceidx+1, 50);
+	 } else {
+		 $desc1 = $description;
+		 $desc2 = "";
+	 }
+
+//     $desc = strtoupper(substr($row['description'],0,27));
      $brand = ucwords(strtolower(substr($row['brand'],0,13)));
      $pak = $row['units'];
      $size = $row['units'] . "-" . $row['size'];
@@ -311,7 +326,12 @@ if (isset($_POST['submitted'])) {
    * begin creating tag
    */
   $pdf->SetXY($genLeft, $descTop);
-  $pdf->Cell($w,4,substr($desc,0,20),0,0,'L');
+  $pdf->Cell($w,4,substr($desc1,0,25),0,0,'L');
+
+  $pdf->SetXY($genLeft, $desc2Top);
+  $pdf->Cell($w,4,substr($desc2,0,25),0,0,'L');
+
+
   $pdf->SetXY($genLeft,$brandTop);
   $pdf->Cell($w/2,4,$brand,0,0,'L');
   $pdf->SetXY($genLeft,$sizeTop);

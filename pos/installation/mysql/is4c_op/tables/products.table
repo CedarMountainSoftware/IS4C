@@ -3,7 +3,7 @@ use is4c_op;
 DROP TABLE IF EXISTS `products`;
 CREATE TABLE `products` (
   `upc` bigint(13) unsigned zerofill default NULL,
-  `description` varchar(30) default NULL,
+  `description` varchar(50) default NULL,
   `normal_price` double default NULL,
   `cost` decimal(11,5) default NULL,
   `pricemethod` smallint(6) default NULL,

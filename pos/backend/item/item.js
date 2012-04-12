@@ -37,7 +37,7 @@ function valid_description(e) {
 	// TODO - Wait, do we really not allow single quotes? I forget 
 	var re_description = new RegExp("[+\',]", "g");
 
-	if (e.value.length > 30 || re_description.test(e.value)) {
+	if (e.value.length > 50 || re_description.test(e.value)) {
 		e.style.color='#F00';
 	} else {
 		e.style.color='#000';
