@@ -194,7 +194,7 @@ function addCardCharge() {
 		boxMsg("transaction must be totaled before card fee can be added.");
 	} else {
 		$_SESSION["CardFeeTotal"] = $_SESSION["amtdue"] * $_SESSION['ccAddPercent'];
-		addItem("CardFee", "Card Fee", "A", "", "", 0, 0, 0, 0, $_SESSION["CardFeeTotal"], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '');
+		addItem("CardFee", "Card Fee", "A", "CF", "", 0, 0, 0, 0, $_SESSION["CardFeeTotal"], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '');
 		// re-total, show it
 		ttl();
 		lastpage();

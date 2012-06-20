@@ -63,7 +63,7 @@ function tenderReport() {
         from dlog
         where tdate > '" . $EOS . "'
         and register_no = " . $_SESSION['laneno']. "
-        and trans_type IN('I','D')
+        and trans_type IN('I','D','A')
         and trans_subtype <> 'IC'
         AND emp_no <> 9999";
 
