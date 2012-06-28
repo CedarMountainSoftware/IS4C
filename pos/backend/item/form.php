@@ -161,6 +161,8 @@
 							<input accesskey="i" '.($backoffice['product_detail']['discount']?'checked ':'').'id="edit_discount" name="edit_discount" type="checkbox"/>
 							<label for="edit_wicable">WI<span class="accesskey">C</span></label>
 							<input accesskey="c" '.($backoffice['product_detail']['wicable']?'checked ':'').'id="edit_wicable" name="edit_wicable" type="checkbox"/>
+							<label for="edit_alcohol">Alcoho<span class="accesskey">l</span></label>
+							<input accesskey="l" '.($backoffice['product_detail']['alcohol']?'checked ':'').'id="edit_alcohol" name="edit_alcohol" type="checkbox"/>
 							<label for="edit_inuse">Acti<span class="accesskey">v</span>e</label>
 							<input accesskey="v" '.($backoffice['product_detail']['inUse']?'checked ':'').'id="edit_inuse" name="edit_inuse" type="checkbox"/>
 						</div>

@@ -49,6 +49,7 @@
 		$backoffice['product_detail']['description']='New Product';
 		$backoffice['product_detail']['discount']=1;
 		$backoffice['product_detail']['foodstamp']=1; 
+		$backoffice['product_detail']['alcohol']=0; 
 		$backoffice['product_detail']['id']='NEW'; // TODO - This may not work
 		$backoffice['product_detail']['modified']=strftime("%F"); 
 		$backoffice['product_detail']['normal_price']=0;

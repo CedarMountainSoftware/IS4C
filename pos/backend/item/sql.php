@@ -43,6 +43,7 @@
 			`products`.`description`,
 			`products`.`discount`,
 			`products`.`foodstamp`, 
+			`products`.`alcohol`, 
 			`products`.`id`,
 			`products`.`modified`, 
 			`products`.`normal_price`,
@@ -118,13 +119,14 @@
 			// TODO - Validate data before sending to MySQL
 			$link=mysql_connect($_SESSION["mServer"], $_SESSION["mUser"], $_SESSION["mPass"]);
 			if ($link) {
-				$query='INSERT `is4c_op`.`products` (`advertised`,`department`,`deposit`,`description`,`discount`,`foodstamp`,`inUse`,`modified`,`normal_price`,`scale`,`size`,`subdept`,`tareweight`,`tax`,`unitofmeasure`,`upc`,`wicable`,`vendor_id`) VALUES (
+				$query='INSERT `is4c_op`.`products` (`advertised`,`department`,`deposit`,`description`,`discount`,`foodstamp`,`alcohol`,`inUse`,`modified`,`normal_price`,`scale`,`size`,`subdept`,`tareweight`,`tax`,`unitofmeasure`,`upc`,`wicable`,`vendor_id`) VALUES (
 		'.((isset($_REQUEST['edit_advertised']) && $_REQUEST['edit_advertised']=='on')?'1':'0').',
 		'.$_REQUEST['edit_department'].',
 		'.$_REQUEST['edit_deposit'].',
 		\''.$_REQUEST['edit_description'].'\',
 		'.((isset($_REQUEST['edit_discount']) && $_REQUEST['edit_discount']=='on')?'1':'0').',
 		'.((isset($_REQUEST['edit_foodstamp']) && $_REQUEST['edit_foodstamp']=='on')?'1':'0').',
+		'.((isset($_REQUEST['edit_alcohol']) && $_REQUEST['edit_alcohol']=='on')?'1':'0').',
 		'.((isset($_REQUEST['edit_inuse']) && $_REQUEST['edit_inuse']=='on')?'1':'0').',
 		\''.strftime("%F %T", strtotime("now")).'\',
 		'.$_REQUEST['edit_price'].',
@@ -159,6 +161,7 @@
 		`description`=\''.$_REQUEST['edit_description'].'\',
 		`discount`='.((isset($_REQUEST['edit_discount']) && $_REQUEST['edit_discount']=='on')?'1':'0').',
 		`foodstamp`='.((isset($_REQUEST['edit_foodstamp']) && $_REQUEST['edit_foodstamp']=='on')?'1':'0').',
+		`alcohol`='.((isset($_REQUEST['edit_alcohol']) && $_REQUEST['edit_alcohol']=='on')?'1':'0').',
 		`inUse`='.((isset($_REQUEST['edit_inuse']) && $_REQUEST['edit_inuse']=='on')?'1':'0').',
 		`modified`=\''.strftime("%F %T", strtotime("now")).'\',
 		`normal_price`='.$_REQUEST['edit_price'].',
