@@ -32,6 +32,7 @@ CREATE TABLE `products` (
   `subdept` smallint(4) default NULL,
   `deposit` double default NULL,
   `id` int(11) NOT NULL auto_increment,
+  `alcohol` boolean default 0,
   PRIMARY KEY  (`id`),
   KEY `upc` (`upc`),
   KEY `description` (`description`),
