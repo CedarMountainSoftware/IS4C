@@ -34,6 +34,7 @@ else {
     $refundamount = "";
 }
 
+
 error_log("refundamount: $refundamount");
 if (!$refundamount || strlen($refundamount) < 1) {
 	$_SESSION['refund'] = 0;
@@ -43,6 +44,10 @@ if (!$refundamount || strlen($refundamount) < 1) {
 	$_SESSION['refund'] = 1;
 	$refundreason = $_POST['reason'];
 	$dept = $_POST['dptmt'];
+
+	// assume no decimal was entered, so divide by 100
+	$refundamount = $refundamount / 100;
+
 	addItem("", "Refund: " . $refundreason, "I", "RF", "R",
 		$dept, $refundamount, 1, $refundamount, $refundamount, 0, 0,
 		0, 0, 0, 0, 0, 0,
