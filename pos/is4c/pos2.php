@@ -47,6 +47,12 @@ if (!function_exists("tenderReport")) include("tenderReport.php");
 <?php
     $ls = lockscreen();
 
+	if ($_SESSION['errorBox'])  {
+		boxMsg($_SESSION['errorBox']);
+		$_SESSION['errorBox'] = '';
+		exit;
+	}
+
     //---------------------------------
     //          MAIN
     //---------------------------------

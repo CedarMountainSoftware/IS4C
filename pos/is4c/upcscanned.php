@@ -110,8 +110,14 @@ function upcscanned($entered) {
     elseif ($num_rows == 0 && substr($upc, 0, 3) == "005") {
         couponcode($upc);
     }
-    // RVM Hardcode for checking whether the customer is 21 or over in case item is alcoholic
-    elseif (($dept == 19 || $dept == 20) && $_SESSION["store"] == "rvm" && $_SESSION["msgrepeat"] == 0 && $_SESSION["carded"] == 0) {
+//    elseif (($dept == 19 || $dept == 20) && $_SESSION["store"] == "rvm" && $_SESSION["msgrepeat"] == 0 && $_SESSION["carded"] == 0) {}
+    elseif ($row['alcohol'] && $_SESSION['carded'] == 0) {
+		$_SESSION['alcentered'] = $entered;
+		goodBeep();
+
+		maindisplay("agecheck.php");
+		/*
+		// below appears to be non-functional:
         if ($_SESSION["bdaystatus"] == 99) {
             $boxMsg  = "<b>Enter date of birth from valid ID</b><br />in the form mmddyyyy<p><font size=-1>[Clear] to cancel</font></p>";
         }
@@ -122,9 +128,8 @@ function upcscanned($entered) {
             $boxMsg  = "<b>Sales of item declined</b><p><font size=-1>[Clear] to cancel</font></p>";
         }
         $_SESSION["boxMsg"] = $boxMsg;
-                bdBoxMsgScreen();
-        }
-    elseif ($row["scale"] != 0 && $_SESSION["weight"] == 0 && $_SESSION["quantity"] == 0) {
+		bdBoxMsgScreen(); */
+	} elseif ($row["scale"] != 0 && $_SESSION["weight"] == 0 && $_SESSION["quantity"] == 0) {
         if ($_SESSION["wgtRequested"] == 0) {
             $_SESSION["wgtRequested"] = 1;
             lastpage();
