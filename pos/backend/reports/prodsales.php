@@ -161,6 +161,42 @@ if (isset($_POST['submit'])) {
 		$lastcustcat = $custcat;
 	}
 
+
+
+	// add misc sales
+	$html .= "<tr><td colspan=\"4\" align=\"center\"><b>Miscellaneous Sales</b></td></tr>";
+
+	$ourwhere = "";
+	$ourwhere .= " trans_status <> 'D' AND trans_status <> 'X' ";
+	if ($startdate && $enddate) {
+		$ourwhere .= " AND `datetime` >= '" . mysql_real_escape_string($startdate) . " 00:00:00' AND `datetime` <= '" . mysql_real_escape_string($enddate) . " 23:59:59'";
+	}
+	$query = "select description as dscr, sum(total) as amt, department from dtransactions WHERE upc LIKE '%DP%' AND " . $ourwhere . " group by department";
+
+	error_log("prodsales.php running query: " . $query);
+	$res = mysql_query($query, $link);
+	if (!$res) {
+		echo "error: " . mysql_error() . "<br />\n";
+	}
+
+
+	while ($row = mysql_fetch_assoc($res)) {
+		$upc = "";
+		$description = $row['dscr'];
+		$cnt = number_format($row['amt'], 2);
+
+		$dept = "";
+		$vendor = "";
+
+		if (!$csvexport)
+			$html .= tablerow($upc, $description, '$'.$cnt, $dept, $vendor);
+		else
+			$csvdata[] = array($upc, $description, $cnt, $dept, $vendor);
+	}
+
+
+
+
 	if ($csvexport) {
 		$filename = "product_sales_report_" . $startdate . '_to_' . $enddate . ".csv";
 		export_csv($filename, $csvdata);
