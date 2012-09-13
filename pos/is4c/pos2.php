@@ -32,6 +32,7 @@ if (!function_exists("clubCard")) include ("clubCard.php");            // --- ap
 if (!function_exists("ccEntered")) include("ccEntered.php");
 if (!function_exists("drawerKick")) include_once("printLib.php");
 if (!function_exists("tenderReport")) include("tenderReport.php");
+if (!function_exists("discountLastItem")) include("additem.php");
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
@@ -617,7 +618,8 @@ if (!function_exists("tenderReport")) include("tenderReport.php");
                         boxMsg("Discount must be greater than zero.");
                     }
                     elseif ($strl <= 50 and $strl > 0) {
-                        percentDiscount($strl);
+                        // percentDiscount($strl);
+						discountLastItem($strl);
                     }
                     else {
                         inputUnknown();

@@ -226,6 +226,49 @@ function addEndofShift() {
     addItem("ENDOFSHIFT", "End of Shift", "S", "", "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '');
 }
 
+function discountLastItem($percent) {
+	error_log("discountLastItem called with arg: " . $percent);
+    $db = tDataConnect();
+
+	// get the amount of the last item scanned or entered
+	$mquery = "SELECT max(trans_id) as last_id FROM localtemptrans";
+    $res = sql_query($mquery, $db);
+	$errors = 1;
+	if ($row = mysql_fetch_assoc($res)) {
+		$last_id = $row['last_id'];
+		if ($last_id > 0) {
+			$chkquery = "SELECT description, total, department, upc FROM localtemptrans WHERE trans_id = $last_id";
+			$res2 = sql_query($chkquery, $db);
+
+			if ($row2 = mysql_fetch_assoc($res2)) {
+				$itemupc = $row2['upc'];
+				$itemdesc = $row2['description'];
+				$discountAmt = $row2['total'] * ($percent / 100);
+				$department = $row2['department'];
+				$errors = 0;
+
+			} else {
+				$errors = 1;
+				boxMsg("You must scan an item before a discount can be applied. [1]");
+			}
+		}
+	} else {
+		$errors = 1;
+		boxMsg("You must scan an item before a discount can be applied. [2]");
+	}
+
+    sql_close($db);
+
+	if (!$errors) {
+
+		// add a line item to discount the specified percentage
+		addItem("DISCOUNT", "** $percent% Item Discount ** [$itemupc] $itemdesc", "I", "ID", "", $department, 0, 1, truncate2(-1 * $discountAmt), truncate2(-1 * $discountAmt), 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 25, 0, '');
+		lastpage();
+	} else {
+		boxMsg("Error processing discount");
+	}
+}
+
 //-------------------------------- insert deli discount (Wedge specific) -----------------------
 function addscDiscount() {
 
