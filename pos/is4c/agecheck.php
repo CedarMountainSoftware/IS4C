@@ -26,7 +26,7 @@
     <head>
         <title></title>
     </head>
-    <body onLoad='document.form.reginput.focus();'>
+    <body onLoad='document.form.dobinput.focus();'>
         <table border='0' cellpadding='0' cellspacing='0'>
             <?php
                 if (!function_exists("printheaderb")) include("drawscreen.php");
@@ -47,7 +47,7 @@
 ?>
                                         <b>Age Identification</b>
                                         <form name='form' method='post' autocomplete='off' action='dobauth.php'>
-                                            <input Type='text' name='dobinput' tabindex='0' onBlur='document.form.reginput.focus();'>
+                                            <input Type='text' name='dobinput' tabindex='0' onBlur='document.form.dobinput.focus();'>
                                         </form>
                                         <p>
                                             <font face='arial' color='white'>
