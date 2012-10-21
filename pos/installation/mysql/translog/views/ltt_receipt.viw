@@ -4,6 +4,12 @@ DROP VIEW IF EXISTS `ltt_receipt`;
 CREATE view ltt_receipt as 
 
 select
+case
+	when upc = 'DISCOUNT'
+		then substr(description, 1, 23)
+	else description
+end
+as
 description,
 case 
 	when voided = 5 
@@ -51,6 +57,6 @@ voided,
 trans_id
 
 from localtemptrans
-where voided <> 5 and UPC <> 'TAX' and UPC <> 'DISCOUNT'
+where voided <> 5 and UPC <> 'TAX' 
 order by trans_id
 

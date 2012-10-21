@@ -43,14 +43,25 @@ function voiditem($item_num) {
             elseif (!$row["upc"] || strlen($row["upc"]) < 1) {
                 voidid($item_num);
 			}
-			elseif ($row['upc'] == "CardFee") {
+			elseif ($row['upc'] == "CardFee" || $row['upc'] == 'DISCOUNT') {
                 voidid($item_num);
 			}
             elseif ($_SESSION["discounttype"] == 3) {
                 voidupc($row["quantity"]."*".$row["upc"]);
             }
             else  {
-                voidupc($row["ItemQtty"]."*".$row["upc"]);
+				// if the item had a discount applied, void the discount too
+				$vq = "SELECT upc FROM localtemptrans WHERE upc = 'DISCOUNT' AND trans_id = " . ($item_num + 1);
+				$vr = sql_query($vq, $db);
+				$vnr = sql_num_rows($vr);
+
+				if ($vnr) {
+					voidupc($row["ItemQtty"]."*".$row["upc"], 0);
+					voidid($item_num + 1);
+				} else {
+					voidupc($row["ItemQtty"]."*".$row["upc"]);
+				}
+
             }
         }
     }
@@ -111,8 +122,7 @@ function voidid($item_num) {
     }
 }
 
-function voidupc($upc) {
-    $lastpageflag = 1;
+function voidupc($upc, $lastpageflag = 1) {
     $deliflag = 0;
 
     if (strpos($upc, "*") && (strpos($upc, "**") || strpos($upc, "*") == 0 || strpos($upc, "*") == strlen($upc)-1)) {

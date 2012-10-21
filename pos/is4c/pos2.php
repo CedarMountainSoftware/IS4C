@@ -611,13 +611,15 @@ if (!function_exists("discountLastItem")) include("additem.php");
                     elseif ($_SESSION["tenderTotal"] != 0) {
                         boxMsg("Discount not applicable after tender.");
                     }
+					/*
                     elseif ($strl > 50) {
                         boxMsg("Discount exceeds maximum.");
                     }
                     elseif ($strl <= 0) {
                         boxMsg("Discount must be greater than zero.");
                     }
-                    elseif ($strl <= 50 and $strl > 0) {
+					 */
+                    elseif ($strl <= 100 and $strl > 0) {
                         // percentDiscount($strl);
 						discountLastItem($strl);
                     }
