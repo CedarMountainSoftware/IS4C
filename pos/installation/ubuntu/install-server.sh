@@ -1,16 +1,39 @@
 #!/bin/bash
 
-aptitude update -y
-aptitude safe-upgrade -y
-echo -e "Enter the password for the root user in MySQL: \c"
-read -s ROOT_PASSWORD
-echo "mysql-server mysql-server/root_password select $ROOT_PASSWORD" | debconf-set-selections
-echo "mysql-server mysql-server/root_password_again select $ROOT_PASSWORD" | debconf-set-selections
-echo "python-mysqldb mysql-server/root_password select $ROOT_PASSWORD" | debconf-set-selections
-echo "python-mysqldb mysql-server/root_password_again select $ROOT_PASSWORD" | debconf-set-selections
-aptitude install -y mysql-server apache2 php5 libapache2-mod-php5 python-mysqldb php5-mysql php-image-barcode php-fpdf
+mysql --user=root --password=root < /pos/installation/mysql/script/create_server_db.sql
 
-python /pos/installation/install_server.py
+for FN in $(ls /pos/installation/mysql/is4c_log/tables/*.table)
+do
+  echo "Inserting records from $FN"
+  mysql --user=root --password=root < $FN
+done
 
-/pos/installation/ubuntu/php_server.pl
-/pos/installation/ubuntu/apache_server.pl
+for FN in $(ls /pos/installation/mysql/is4c_log/views/*.viw)
+do
+  echo "Inserting records from $FN"
+  mysql --user=root --password=root < $FN
+done
+
+for FN in $(ls /pos/installation/mysql/is4c_op/tables/*.table)
+do
+  echo "Inserting records from $FN"
+  mysql --user=root --password=root < $FN
+done
+
+for FN in $(ls /pos/installation/mysql/is4c_op/views/*.viw)
+do
+  echo "Inserting records from $FN"
+  mysql --user=root --password=root < $FN
+done
+
+for FN in $(ls /pos/installation/mysql/is4c_op/data/*.insert)
+do
+  echo "Inserting records from $FN"
+  mysql --user=root --password=root < $FN
+done
+
+mysql --user=root --password=root < /pos/installation/mysql/script/create_server_acct.sql
+
+# we can do better by just copying the template files
+#/pos/installation/ubuntu/php_server.pl
+#/pos/installation/ubuntu/apache_server.pl
