@@ -85,7 +85,7 @@
 			default:
 				$html .= "<table cellspacing=\"5\">";
 				$html .= tableheaderrow("Vendor Name");
-				$query = "SELECT vendor_id, vendor_name FROM vendors ORDER BY vendor_id ASC";
+				$query = "SELECT vendor_id, vendor_name FROM vendors ORDER BY vendor_name ASC";
 				$res = mysql_query($query, $link);
 				while ($row = mysql_fetch_assoc($res)) {
 					$html .= tablerow(
