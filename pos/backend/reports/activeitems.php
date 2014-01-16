@@ -131,7 +131,7 @@ if (isset($_POST['submit'])) {
 	}
 
 	if ($csvexport) {
-		$filename = "active_items_report.csv";
+		$filename = "active_items_report_" . $startdate . '_to_' . $enddate . ".csv";
 		export_csv($filename, $csvdata);
 		exit;
 	}
