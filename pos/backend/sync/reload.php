@@ -54,7 +54,7 @@
 // TODO - Auto generate lanes from define.conf, for now, hardcode
 	$lanes=array(
 		array('Name'=>'Lane 01', 'IP'=>'192.168.0.101', 'defactive' => 1),
-		array('Name'=>'Lane 02', 'IP'=>'192.168.0.102', 'defactive' => 0)
+		array('Name'=>'Lane 02', 'IP'=>'192.168.0.102', 'defactive' => 1)
 	);
 	
 	foreach ($lanes as $lane) {
