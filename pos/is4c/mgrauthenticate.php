@@ -32,15 +32,15 @@ $password = strtoupper(trim($_POST["reginput"]));
 if (!isset($password) || strlen($password) < 1 || $password == "CL") {
     gohome();
 }
-//elseif (!is_numeric($password)) {
-//    header("Location:mgrinvalid.php");
-//}
-//elseif ($password > 9999 || $password < 1) {
-//    header("Location:mgrinvalid.php");
-//}
+elseif (!is_numeric($password)) {
+    header("Location:mgrinvalid.php");
+}
+elseif ($password > 9999 || $password < 1) {
+    header("Location:mgrinvalid.php");
+}
 else {
-    $query = "select emp_no, FirstName, LastName from employees where emp_no = " . $_SESSION["CashierNo"] .
-        " and (cashierpassword = '" . mysql_escape_string($password) . "' or adminpassword = '" . mysql_escape_string($password) . "')";
+    $query = "select emp_no, FirstName, LastName from employees where empactive = 1 and frontendsecurity >= 11 "
+        . "and (cashierpassword = " . $password . " or adminpassword = " . $password . ")";
 
     $db = pDataConnect();
     $result = sql_query($query, $db);
