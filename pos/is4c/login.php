@@ -68,7 +68,7 @@
                     I S 4 C
                 </td>
                 <td id='full_header'>
-                    I N T E G R A T E D &nbsp; S Y S T E M S &nbsp; F O R &nbsp; C O O P S &nbsp; V 2 . 2
+                    I N T E G R A T E D &nbsp; S A L E S &nbsp; F O R &nbsp; C O O P S &nbsp; V 2 . 2
                 </td>
             </tr>
             <tr>
@@ -87,9 +87,7 @@
                             <td>
                                 <span style='font-weight: bold;'>log in</span>
                                 <form name='form' method='post' autocomplete='off' action='lib/authenticate.php'>
-                                    Cashier #<br /><input type='text' name='cashiernum' size='20' tabindex='0' onblur='document.form.reginput.focus();' /><br />
-                                    Password<br /><input type='password' name='cashierpassword' size='20' tabindex='0' onblur='document.form.reginput.focus();' /><br />
-								<input type="submit" value="Login" />
+                                    <input type='password' name='reginput' size='20' tabindex='0' onblur='document.form.reginput.focus();' />
                                 </form>
                                 <br />
                                 <?php
@@ -99,6 +97,7 @@
                                         unset($_SESSION["auth_fail"]);
                                     }
                                 ?>
+                                Please enter your password
                             </td>
                         </tr>
                     </table>
