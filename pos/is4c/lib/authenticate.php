@@ -45,29 +45,24 @@
     rePoll();
     $_SESSION["training"] = 0;
 
-    //$password = str_replace(array("TRAINING", "'", ",", "+"), array('9999', ""), strtoupper(trim($_POST["reginput"])));
-	$cashiernum = $_POST['cashiernum'];
-	$cashierpass = $_POST['cashierpassword'];
-	error_log("attempting to authenticate: $cashiernum pass: $cashierpass");
+    $password = str_replace(array("TRAINING", "'", ",", "+"), array('9999', ""), strtoupper(trim($_POST["reginput"])));
 
     $global_values = get_global_values();
 
-	// WTF?
-//    if (!$global_values["LoggedIn"]) {
+    if (!$global_values["LoggedIn"]) {
 
-        $employee_number = user_auth($cashiernum, $cashierpass);
+        $employee_number = user_pass($password);
 
-        if ($employee_number) {
+        $employee = get_user_info($employee_number);
 
-			$employee = get_user_info($employee_number);
-
+        if ($employee) {
             testremote();
 
             setglobalvalue("CashierNo", $employee["EmpNo"]);
             setglobalvalue("cashier", $employee["FirstName"] . " " . substr($employee["LastName"], 0, 1) . ".");
             loadglobalvalues();
 
-            $transno = gettransno($employee_number);
+            $transno = gettransno($password);
             $_SESSION["transno"] = $transno;
             setglobalvalue("transno", $transno);
             setglobalvalue("LoggedIn", 1);
@@ -78,7 +73,7 @@
 
             loginscreen();
         }
-        elseif ($cashiernum == 9999 && $cashierpass == 9999) {
+        elseif ($password == 9999) {
             setglobalvalue("CashierNo", 9999);
             setglobalvalue("cashier", "Training Mode");
             setglobalvalue("LoggedIn", 1);
@@ -90,16 +85,15 @@
             $_SESSION["auth_fail"] = 1;
             header("Location:/login.php");
         }
-// more WTF
-/*    }
+    }
     else {
-        if (get_user_info(user_auth($cashiernum, $cashierpass)) == $global_values["CashierNo"]) {
+        if (get_user_info(user_pass($password)) == $global_values["CashierNo"]) {
             loadglobalvalues();
             testremote();
             loginscreen();
         }
         else {
-            if (user_auth($cashiernum, $cashierpass)) {
+            if (user_pass_priv($password)) {
                 loadglobalvalues();
                 testremote();
                 loginscreen();
@@ -111,7 +105,7 @@
 
             sql_close($db_a);
         }
-	} */
+    }
 
     getsubtotals();
     $_SESSION["datetimestamp"] = strftime("%Y-%m-%m/%d/%y %T",time());
