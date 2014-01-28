@@ -2,10 +2,9 @@ use is4c_op;
 
 DROP TABLE IF EXISTS `products`;
 CREATE TABLE `products` (
-  `upc` bigint(13) unsigned zerofill default NULL,
-  `description` varchar(50) default NULL,
+  `upc` bigint(13) unsigned zerofill NOT NULL UNIQUE,
+  `description` varchar(30) default NULL,
   `normal_price` double default NULL,
-  `cost` decimal(11,5) default NULL,
   `pricemethod` smallint(6) default NULL,
   `groupprice` double default NULL,
   `quantity` smallint(6) default NULL,
@@ -33,15 +32,10 @@ CREATE TABLE `products` (
   `subdept` smallint(4) default NULL,
   `deposit` double default NULL,
   `id` int(11) NOT NULL auto_increment,
-  `brand_id` INT UNSIGNED default NULL,
   `vendor_id` INT UNSIGNED default NULL,
-  `notes` text default NULL,
   `alcohol` boolean default 0,
   PRIMARY KEY  (`id`),
   KEY `upc` (`upc`),
   KEY `description` (`description`),
   KEY `normal_price` (`normal_price`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-alter table products add constraint unique key (upc);
-
