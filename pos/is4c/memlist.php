@@ -56,7 +56,7 @@ else {
         $query = "select * from custdata where LastName like '" . $entered . "%' order by LastName, FirstName";
     }
     else {
-        $query = "select * from custdata where CardNo = '" . $entered . "' order by personNum";
+        $query = "select * from members where CardNo = '" . $entered . "'AND Active = 1 order by personNum";//changed 'custdata' to 'members' AND added the 'AND Active = 1 - sjg
     }
 
     $result = sql_query($query, $db_a);

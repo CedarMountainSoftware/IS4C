@@ -105,7 +105,10 @@
                 </td>
             </tr>
             <tr>
-                <td width='640' colspan='2' align='right' valign='top'>
+				<td align='left' valign="top">
+					<a href="http://backend/">Backend</a>
+				</td>
+                <td  align='right' valign='top'>
                     <font id='exit_text'>EXIT</font>
                     <div id='exit_switch' onclick="<?= $_SESSION["browserOnly"]?"window.top.close(); return false;":"location.href='bye.html'; return false;" ?>">
                     </div>

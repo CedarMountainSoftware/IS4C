@@ -81,7 +81,7 @@ if (isset($_POST['submit'])) {
 	if ($startdate && $enddate) {
 		$ourwhere .= " AND ( `datetime` >= '" . mysql_real_escape_string($startdate) . " 00:00:00' AND `datetime` <= '" . mysql_real_escape_string($enddate) . " 23:59:59' )";
 	}
-	$query = "select datetime, description, trans_subtype, total, card_no, memb.FirstName AS first, memb.LastName AS last, memb.addshopper, memb.sponsorCardNo, spons.FirstName as sponsfirst, spons.LastName as sponslast from dtransactions LEFT JOIN is4c_op.members memb ON dtransactions.card_no = memb.CardNo LEFT JOIN is4c_op.members spons ON memb.sponsorCardNo = spons.CardNo WHERE " . $ourwhere . " order by datetime ASC";
+	$query = "select datetime, description, trans_subtype, total, card_no, memb.FirstName AS first, memb.LastName AS last, memb.addshopper, memb.sponsorCardNo, spons.FirstName as sponsfirst, spons.LastName as sponslast from dtransactions LEFT JOIN is4c_op.members memb ON dtransactions.card_no = memb.CardNo AND memb.id = (select id from is4c_op.members where CardNo = dtransactions.card_no limit 1) LEFT JOIN is4c_op.members spons ON memb.sponsorCardNo = spons.CardNo AND spons.id = (select id from is4c_op.members where CardNo = memb.sponsorCardNo limit 1) WHERE " . $ourwhere . " order by datetime ASC";
 
 	error_log("purchases.php running query: " . $query);
 	$res = mysql_query($query, $link);
@@ -91,7 +91,7 @@ if (isset($_POST['submit'])) {
 
 
 	// first put all the transactions into an array so we can process change
-	$transactions = array();
+	$transaction = array();
 	$transidx = 0;
 
 	while ($row = mysql_fetch_assoc($res)) {

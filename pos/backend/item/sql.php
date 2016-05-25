@@ -43,6 +43,7 @@
 			`products`.`description`,
 			`products`.`discount`,
 			`products`.`foodstamp`, 
+			`products`.`doublesnap`, 
 			`products`.`alcohol`, 
 			`products`.`id`,
 			`products`.`modified`, 
@@ -55,6 +56,7 @@
 			`products`.`unitofmeasure`, 
 			`products`.`upc`,
 			`products`.`wicable`,
+			`products`.`order_number`,
 			`products`.`inUse`,
 			`products`.`vendor_id`
 
@@ -119,13 +121,14 @@
 			// TODO - Validate data before sending to MySQL
 			$link=mysql_connect($_SESSION["mServer"], $_SESSION["mUser"], $_SESSION["mPass"]);
 			if ($link) {
-				$query='INSERT `is4c_op`.`products` (`advertised`,`department`,`deposit`,`description`,`discount`,`foodstamp`,`alcohol`,`inUse`,`modified`,`normal_price`,`scale`,`size`,`subdept`,`tareweight`,`tax`,`unitofmeasure`,`upc`,`wicable`,`vendor_id`) VALUES (
+				$query='INSERT `is4c_op`.`products` (`advertised`,`department`,`deposit`,`description`,`discount`,`foodstamp`,`doublesnap`,`alcohol`,`inUse`,`modified`,`normal_price`,`scale`,`size`,`subdept`,`tareweight`,`tax`,`unitofmeasure`,`upc`,`order_number`,`wicable`,`vendor_id`) VALUES (
 		'.((isset($_REQUEST['edit_advertised']) && $_REQUEST['edit_advertised']=='on')?'1':'0').',
 		'.$_REQUEST['edit_department'].',
 		'.$_REQUEST['edit_deposit'].',
 		\''.$_REQUEST['edit_description'].'\',
 		'.((isset($_REQUEST['edit_discount']) && $_REQUEST['edit_discount']=='on')?'1':'0').',
 		'.((isset($_REQUEST['edit_foodstamp']) && $_REQUEST['edit_foodstamp']=='on')?'1':'0').',
+		'.((isset($_REQUEST['edit_doublesnap']) && $_REQUEST['edit_doublesnap']=='on')?'1':'0').',
 		'.((isset($_REQUEST['edit_alcohol']) && $_REQUEST['edit_alcohol']=='on')?'1':'0').',
 		'.((isset($_REQUEST['edit_inuse']) && $_REQUEST['edit_inuse']=='on')?'1':'0').',
 		\''.strftime("%F %T", strtotime("now")).'\',
@@ -137,6 +140,7 @@
 		'.$_REQUEST['edit_tax'].',
 		\''.$_REQUEST['edit_unitofmeasure'].'\',
 		'.$_REQUEST['edit_upc'].',
+		'.($_REQUEST['edit_order_number'] ? $_REQUEST['edit_order_number']:'NULL').',
 		'.((isset($_REQUEST['edit_wicable']) && $_REQUEST['edit_wicable']=='on')?'1':'0').','.
 		(isset($_REQUEST['edit_vendor']) && $_REQUEST['edit_vendor']!=""?$_REQUEST['edit_vendor']:'NULL').
 		')';
@@ -161,6 +165,7 @@
 		`description`=\''.$_REQUEST['edit_description'].'\',
 		`discount`='.((isset($_REQUEST['edit_discount']) && $_REQUEST['edit_discount']=='on')?'1':'0').',
 		`foodstamp`='.((isset($_REQUEST['edit_foodstamp']) && $_REQUEST['edit_foodstamp']=='on')?'1':'0').',
+		`doublesnap`='.((isset($_REQUEST['edit_doublesnap']) && $_REQUEST['edit_doublesnap']=='on')?'1':'0').',
 		`alcohol`='.((isset($_REQUEST['edit_alcohol']) && $_REQUEST['edit_alcohol']=='on')?'1':'0').',
 		`inUse`='.((isset($_REQUEST['edit_inuse']) && $_REQUEST['edit_inuse']=='on')?'1':'0').',
 		`modified`=\''.strftime("%F %T", strtotime("now")).'\',
@@ -171,10 +176,12 @@
 		`tareweight`='.($_REQUEST['edit_tareweight'] ? $_REQUEST['edit_tareweight'] : '0').',
 		`tax`='.($_REQUEST['edit_tax'] ? $_REQUEST['edit_tax'] : '0').',
 		`unitofmeasure`=\''.$_REQUEST['edit_unitofmeasure'].'\',
+		`order_number`='.($_REQUEST['edit_order_number'] ? $_REQUEST['edit_order_number']:'NULL').',
 		`upc`='.$_REQUEST['edit_upc'].',
 		`wicable`='.((isset($_REQUEST['edit_wicable']) && $_REQUEST['edit_wicable']=='on')?'1':'0').',
 		`vendor_id`='.(isset($_REQUEST['edit_vendor']) && $_REQUEST['edit_vendor']!=""?$_REQUEST['edit_vendor']:'NULL'). ' 
 	WHERE `id`='.$_REQUEST['edit_id'].' LIMIT 1';
+					//array_push($backoffice['status'], $query);
 				$result=mysql_query($query, $link);
 				if ($result) {
 					array_push($backoffice['status'], 'Item updated successfully');

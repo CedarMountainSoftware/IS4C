@@ -374,20 +374,23 @@ function upcscanned($entered) {
 
             $total = truncate2($total);
             $unitPrice = truncate2($unitPrice);
-
-            if ($upc == "0000000008010" && $_SESSION["msgrepeat"] == 0) {
+		//the upc's listed below were causing problems
+		//because the numbers 8010,8006,and 8011 are used by MSLA Coop
+		//for products. I changed the 1 digit from a '0' to a '9'
+		//sjg 8-28-12
+            if ($upc == "9000000008010" && $_SESSION["msgrepeat"] == 0) {
                 $_SESSION["endorseType"] = "giftcert";
                 $_SESSION["tenderamt"] = $total;
                 $_SESSION["boxMsg"] = "<b>" . $total . " gift certificate</b><br />insert document<br />press [enter] to endorse<p><font size='-1'>[clear] to cancel</font></p>";
                 boxMsgscreen();
             }
-            elseif ($upc == "0000000008006" && $_SESSION["msgrepeat"] == 0) {
+            elseif ($upc == "9000000008006" && $_SESSION["msgrepeat"] == 0) {
                 $_SESSION["endorseType"] = "stock";
                 $_SESSION["tenderamt"] = $total;
                 $_SESSION["boxMsg"] = "<B>".$total." stock payment</B><br />insert form<br />press [enter] to endorse<P><FONT size='-1'>[clear] to cancel</FONT>";
                 boxMsgscreen();
             }
-            elseif ($upc == "0000000008011" && $_SESSION["msgrepeat"] == 0) {
+            elseif ($upc == "9000000008011" && $_SESSION["msgrepeat"] == 0) {
                 $_SESSION["endorseType"] = "classreg";
                 $_SESSION["tenderamt"] = $total;
                 $_SESSION["boxMsg"] = "<b>" . $total . " class registration</b><br />insert form<br />press [enter] to endorse<p><font size='-1'>[clear] to cancel</font></p>";

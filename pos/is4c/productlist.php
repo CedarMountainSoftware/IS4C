@@ -82,12 +82,14 @@ else {
     }
 
     if (!is_numeric($entered)) {
+	$entered = mysql_real_escape_string($entered);
         $query = "select upc, description, normal_price, special_price, advertised, scale from products where "
             . " inUse = 1 AND description like '%" . $entered . "%' "
-            . "order by description";
+            . "order by upc";
         $boxSize = 15;
     }
     else {
+	$entered = mysql_real_escape_string($entered);
         $query = "select upc, description, normal_price, special_price, advertised, scale from products where "
             . "upc = '" . $entered . "' AND inUse  = 1";
         $boxSize = 3;

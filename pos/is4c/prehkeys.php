@@ -35,8 +35,9 @@ function memberID($member_number) {
 //    to allow cashier to select which personNum to apply to current transaction.    
 //     Else function defaults to personNum 1.                                        ~jb    2007-07-22
 
-    $query = "select * from custdata where CardNo = '" . $member_number . "'";        
+    $query = "select * from members where CardNo = '" . $member_number . "'";//added to account for non-active members        
 
+    
     $db = pDataConnect();
     $result = sql_query($query, $db);
     $num_rows = sql_num_rows($result);
@@ -75,11 +76,22 @@ function memberID($member_number) {
 
 function setMember($id) {
     $conn = pDataConnect();
-    $query = "SELECT * FROM custdata WHERE id = " . $id;
+    //$query = "SELECT * FROM custdata WHERE id = " . $id;
+    $query = "SELECT * FROM members WHERE id = " . $id;   //added to move from custdata to member table to catch non-active members
     $result = sql_query($query, $conn);
     $num_rows = sql_num_rows($result);        
 
+
     $row = sql_fetch_array($result);
+
+    //added by sjg ---- 2-19-2014 to catch non-active members and display message
+    if($row["Active"] == 0)
+    {
+	//the members Active status is set to '0', display message and exit.
+	msgscreen("Status Inactive - Please see membership office to make arrangements.");	
+    }
+
+
     $_SESSION["memMsg"] = blueLine($row);
     $_SESSION["memberID"] = $row["CardNo"];
     $_SESSION["memType"] = $row["memType"];
@@ -606,6 +618,7 @@ function fsEligible() {
         if ($_SESSION["ttlflag"] != 1) ttl();
         else addItem("", "Foodstamps Eligible", "" , "", "D", 0, 0, 0, truncate2($_SESSION["fsEligible"]), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, '');
 
+
         lastpage();
     }
 }
@@ -874,13 +887,14 @@ function wmdiscount() {
     $sconn = mDataConnect();
     $conn2 = tDataConnect();
         
-    $volQ = "SELECT * FROM is4c_op.volunteerDiscounts WHERE CardNo = " . $_SESSION["memberID"];
+//    $volQ = "SELECT * FROM is4c_op.volunteerDiscounts WHERE CardNo = " . $_SESSION["memberID"];
     
-    $volR = sql_query($volQ,$sconn);
-    $row = sql_fetch_array($volR);
-    $total = $row["total"];
-    
-    if ($row["staff"] == 3) {
+//    $volR = sql_query($volQ,$sconn);
+//    $row = sql_fetch_array($volR);
+//    $total = $row["total"];
+$total =1000;    
+
+    if ($_SESSION["isStaff"] == 3) {
         if ($_SESSION["discountableTotal"] > $total) {
             $a = $total * .15;                                                                // apply 15% disocunt
             $b = ($_SESSION["discountableTotal"] - $total) * .02 ;                                // apply 2% discount
@@ -895,23 +909,27 @@ function wmdiscount() {
             $_SESSION["transDiscount"] = $_SESSION["discountableTotal"] * .15;
         }
     }
-    elseif ($row["staff"] == 6) {
+    elseif ($_SESSION["isStaff"] == 6) {
+
             if ($_SESSION["discountableTotal"] > $total) {
-            $a = $total * .05;                                                                // apply 15% disocunt
+
+            $a = $total * .10;                                                                // apply 10% disocunt
             $aggdisc = number_format(($a / $_SESSION["discountableTotal"]) * 100,2);                // aggregate discount
 
             $_SESSION["transDiscount"] = $a;
             $_SESSION["percentDiscount"] = $aggdisc;
         }
         elseif ($_SESSION["discountableTotal"] <= $total) {
-            $_SESSION["percentDiscount"] = 5;
-            $_SESSION["transDiscount"] = $_SESSION["discountableTotal"] * .05;
+
+            $_SESSION["percentDiscount"] = 10;
+            $_SESSION["transDiscount"] = $_SESSION["discountableTotal"] * .10;
         }
     }
 
     sql_query("update localtemptrans set percentDiscount = ".$_SESSION["percentDiscount"], $conn2);
 
     if ($_SESSION["discountableTotal"] < $total) {
+
         $a = number_format($_SESSION["discountableTotal"] / 20,2);
         $arr = explode(".",$a);
         if ($arr[1] >= 75 && $arr[1] != 00) {

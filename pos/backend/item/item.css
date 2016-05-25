@@ -72,6 +72,7 @@ INPUT[name="edit_deposit"] {
 }
 
 LABEL[for="edit_foodstamp"],
+LABEL[for="edit_doublesnap"],
 LABEL[for="edit_alcohol"],
 LABEL[for="edit_weighed"],
 LABEL[for="edit_advertised"],

@@ -99,7 +99,7 @@ if (isset($_POST['submit'])) {
 	if ($startdate && $enddate) {
 		$ourwhere .= " AND `datetime` >= '" . mysql_real_escape_string($startdate) . " 00:00:00' AND `datetime` <= '" . mysql_real_escape_string($enddate) . " 23:59:59'";
 	}
-	$query = "SELECT di.upc AS upcnum, sum(di.quantity) AS cnt, prod.description AS proddesc, dept_name, vendor_name, ccat.title AS custcattitle FROM dtransactions di LEFT JOIN is4c_op.products prod ON di.upc = prod.upc LEFT JOIN is4c_op.departments ON prod.department = departments.dept_no LEFT JOIN is4c_op.vendors vend ON prod.vendor_id = vend.vendor_id LEFT JOIN is4c_op.custcategories ccat ON di.upc >= range_start AND di.upc <= range_end AND showit = true WHERE " . $ourwhere . " AND prod.description IS NOT NULL group by di.upc order by vendor_name DESC, ccat.title ASC, prod.description ASC";
+	$query = "SELECT di.upc AS upcnum, sum(di.quantity) AS cnt,sum(di.total) AS total, prod.description AS proddesc, dept_name, vendor_name, ccat.title AS custcattitle, prod.order_number AS order_number FROM dtransactions di LEFT JOIN is4c_op.products prod ON di.upc = prod.upc LEFT JOIN is4c_op.departments ON prod.department = departments.dept_no LEFT JOIN is4c_op.vendors vend ON prod.vendor_id = vend.vendor_id LEFT JOIN is4c_op.custcategories ccat ON di.upc >= range_start AND di.upc <= range_end AND showit = true WHERE " . $ourwhere . " AND prod.description IS NOT NULL group by di.upc order by vendor_name DESC, ccat.title ASC, prod.description ASC";
 
 	error_log("prodsales.php running query: " . $query);
 	$res = mysql_query($query, $link);
@@ -117,7 +117,7 @@ if (isset($_POST['submit'])) {
 
 	$firstvendor = true;
 	$firstcat = true;
-	
+	$dept_total = 0;	
 	$html .= "<table >";
 	// $html .= '<tr><th align="left">UPC</th><th align="left">Product</th><th align="left">Sales</th><th align="left">Vendor</th><th align="left">Category</th></tr>';
 	while ($row = mysql_fetch_assoc($res)) {
@@ -129,14 +129,24 @@ if (isset($_POST['submit'])) {
 		$vendor = $row['vendor_name'];
 		$custcat = $row['custcattitle'];
 		$dept = $row['dept_name'];
-
+		$order_num = $row['order_number'];
+		$total = $row['total'];	
 		
+		//$dept_total = $dept_total + $total;
+
 		if ($vendor != $lastvendor || $firstvendor) {
 			if ($vendor != "")
+			{
+			//	$html .= "<tr><td colspan=\"4\" align=\"right\">$dept_total</td></tr> ";
+				$dep_total = 0;
 				$html .= "<tr><td colspan=\"4\" align=\"center\"><b>$vendor</b></td></tr>";
-			else 
+			}
+			else
+			{
+			//	$html .= "<tr><td colspan=\"4\" align=\"right\">$dept_total</td></tr> ";
+				$dep_total = 0; 
 				$html .= "<tr><td colspan=\"4\" align=\"center\"><b>UNKNOWN VENDOR</b></td></tr>";
-
+			}
 			$html .= '<tr><th align="left">UPC</th><th align="left">Product</th><th align="left">Sales</th><th align="left">Department</th><th align="left">Vendor</th></tr>';
 			$firstvendor = false;
 			$firstcat = true;
@@ -144,7 +154,9 @@ if (isset($_POST['submit'])) {
 		}
 
 		if ($custcat != "" && ($custcat != $lastcustcat || $firstcat)) {
+			//$html .= "<tr><td colspan=\"4\" align=\"right\">$dept_total</td></tr> ";
 			$html .= "<tr><td colspan=\"4\" align=\"left\"><b>$custcat</b></td></tr>";
+			$dept_total=0;
 			$firstcat = false;
 		}
 
@@ -152,9 +164,9 @@ if (isset($_POST['submit'])) {
 
 		if (is_numeric($upc)) {
 			if (!$csvexport)
-				$html .= tablerow($upc, $description, $cnt, $dept, $vendor);
+				$html .= tablerow($upc, $description, $cnt, $dept, $vendor ,$total);
 			else
-				$csvdata[] = array($upc, $description, $cnt, $dept, $vendor);
+				$csvdata[] = array($upc, $description, $cnt, $dept, $vendor,$order_num);
 		}
 
 		$lastvendor = $vendor;

@@ -49,6 +49,7 @@
 		$backoffice['product_detail']['description']='New Product';
 		$backoffice['product_detail']['discount']=1;
 		$backoffice['product_detail']['foodstamp']=1; 
+		$backoffice['product_detail']['doublesnap']=0; 
 		$backoffice['product_detail']['alcohol']=0; 
 		$backoffice['product_detail']['id']='NEW'; // TODO - This may not work
 		$backoffice['product_detail']['modified']=strftime("%F"); 
@@ -95,8 +96,8 @@
 				<input name="a" type="hidden" value="search"/> 
 				<input name="q" type="text" value=""/>
 				<select name="t" size=1>
-					<option value="upc_description_sku">UPC/Description/Item Number</option>
-					<option selected value="upc">UPC</option>
+					<option selected value="upc_description_sku">UPC/Description/Item Number</option>
+					<option value="upc">UPC</option>
 					<option value="description">Description</option>
 					<option disabled value="item number">Item Number</option>
 					<option disabled value="brand">Brand</option>

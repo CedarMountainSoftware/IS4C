@@ -161,6 +161,14 @@ int main(void) {
                     fp_scanner = fopen("/pos/is4c/rs232/scanner", "w");
                     fprintf(fp_scanner, "%s\n", scannerInput);
                     fclose(fp_scanner);
+
+		    //sjg: trying to fix the dbl scan bug. now it sleeps and then
+		    //		throws away anything that might have been read in
+		    //		during the .8 second sleep.
+		    usleep(800);
+		    //now flush the stream
+		    while(read(mainfd, &chout, 1)!=-1)
+			usleep(10);
                 }
 
                 /**************** process weight data ******************/
@@ -190,8 +198,11 @@ int main(void) {
                 }  /* weight data processing ends */
             }     /* end of line data processing ends */
         }       /* non-empty buffer data processing ends */
+	else
+	  usleep(50);
         in_buffer = -1;
-        usleep(1);
+	//sjg changed the sleep from 1 to 100
+        usleep(10);
     }
 
     close(mainfd);

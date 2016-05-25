@@ -24,6 +24,7 @@
 				<li><a href="activeitems.php">Active Items</a></li>
 
 				<li><a href="purchases.php">Member Purchases Report</a></li>
+				<li><a href="purchasetotals.php">Member Purchases Totals</a></li>
 			</ul>
 		</div>';
 	
