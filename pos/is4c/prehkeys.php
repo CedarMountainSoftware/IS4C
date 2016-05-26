@@ -188,7 +188,7 @@ function checkstatus($num) {
     sql_close($db);
 }
 
-function tender($right, $strl) {
+function tender($right, $strl, $noprint = 0) {
     $tender_upc = "";
     $dollar = $_SESSION["dollarOver"];
 
@@ -213,6 +213,9 @@ function tender($right, $strl) {
     elseif ((($right == "FS") && $strl/100 > ($_SESSION["fsEligible"] + 0.005)) && $_SESSION["refundTotal"] == 0) {
         xboxMsg("EBT food tender cannot exceed eligible amount");
     }
+	elseif ($right == "DS" && $strl / 100 > ( ( $_SESSION['fsEligible'] / 2 ) + 0.005 ) ) {
+	xboxMsg("Discount cannot exceed half of eligible EBT amount.");
+	}
     elseif($right == "EF" && truncate2($strl/100) > $_SESSION["fsEligible"]) {
         xboxMsg("no way!");
     }
@@ -234,7 +237,7 @@ function tender($right, $strl) {
         if ($_SESSION["ttlflag"] == 0) {
             boxMsg("transaction must be totaled before tender can be accepted");
         }
-        elseif (($right == "FS" || $right == "EF") && $_SESSION["fntlflag"] == 0) {
+        elseif (($right == "FS" || $right == "EF" || $right == "DS" ) && $_SESSION["fntlflag"] == 0) {
             boxMsg("eligble amount must be totaled before foodstamp tender can be accepted");
         }
         elseif ($right == "EF" && $_SESSION["fntlflag"] == 1 && $_SESSION["fsEligible"] + 10 <= $strl) {
@@ -337,6 +340,7 @@ function tender($right, $strl) {
                         getsubtotals();
                     }
 
+
                     if ($_SESSION["amtdue"] <= 0.005) {
                         $_SESSION["change"] = -1 * $_SESSION["amtdue"];
                         $cash_return = $_SESSION["change"];
@@ -354,10 +358,25 @@ function tender($right, $strl) {
                         printReceiptfooter();
                     }
                     else {
+			if ($right == "DS") {
+				$_SESSION['dstendered'] += $strl;
+
+    				getsubtotals();
+				$_SESSION["fntlflag"] = 1;
+				setglobalvalue("fntlflag", 1);
+				addItem("", "Foodstamps Remaining Total:", "" , "", "D", 0, 0, 0, truncate2($_SESSION["fsEligible"]), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, '');
+				// sometimes we don't print the items yet if the calling function has more stuff to do first
+				// if $noprint == 1 the lastpage() function should get called later 
+				if (!$noprint)
+					lastpage();
+			} else {
+
+
                         $_SESSION["change"] = 0;
                         $_SESSION["fntlflag"] = 0;
                         ttl();
                         lastpage();
+			}
                     }
                 }
             }
@@ -587,11 +606,30 @@ function ttl() {
     
         if ($_SESSION["fntlflag"] == 1) {
             addItem("", "Foodstamps Eligible", "", "", "D", 0, 0, 0, truncate2($_SESSION["fsEligible"]), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, '');
+		$dseligible = getDSDiscountEligible();
+
+		if ($dseligible > 0) {
+			addItem("", "Discount Eligible", "", "", "D", 0, 0, 0, truncate2($dseligible),  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, '');
+			tender("DS", $dseligible*100, 1);
+		}
         }
     }
 
     $_SESSION["repeat"] = 0;
 }
+
+function getDSDiscountEligible() {
+
+	$eligible = ($_SESSION['fsEligible'] / 2);
+
+	// TODO: any previous EBT DS transactions on the same day by the same user?
+	// if so, reduce or remove the eligible amount
+
+
+
+	return $eligible - $_SESSION['dstendered'];
+}
+
 
 function finalttl() {
     if ($_SESSION["percentDiscount"] > 0) {
@@ -615,10 +653,18 @@ function fsEligible() {
     else {
         $_SESSION["fntlflag"] = 1;
         setglobalvalue("fntlflag", 1);
-        if ($_SESSION["ttlflag"] != 1) ttl();
-        else addItem("", "Foodstamps Eligible", "" , "", "D", 0, 0, 0, truncate2($_SESSION["fsEligible"]), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, '');
+        if ($_SESSION["ttlflag"] != 1) {
+		ttl();
+        } else {
+		addItem("", "Foodstamps Eligible", "" , "", "D", 0, 0, 0, truncate2($_SESSION["fsEligible"]), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, '');
+		$dseligible = getDSDiscountEligible();
 
+		if ($dseligible > 0)  {
+			addItem("", "Discount Eligible", "", "", "D", 0, 0, 0, truncate2($dseligible),  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, '');
+			tender("DS", $dseligible*100, 1);
+		} 
 
+	}
         lastpage();
     }
 }
