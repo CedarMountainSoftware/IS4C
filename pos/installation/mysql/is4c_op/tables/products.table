@@ -37,6 +37,8 @@ CREATE TABLE `products` (
   `vendor_id` INT UNSIGNED default NULL,
   `notes` text default NULL,
   `alcohol` boolean default 0,
+  `order_number` int(11) DEFAULT NULL,
+  `doublesnap` boolean default 0,
   PRIMARY KEY  (`id`),
   KEY `upc` (`upc`),
   KEY `description` (`description`),
