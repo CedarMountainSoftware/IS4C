@@ -201,6 +201,7 @@ function plainmsg($strmsg) {
 }
 
 function msgbox($strmsg, $icon) {
+	more_info($strmsg);
     printheaderb();
     echo "<tr><td height='295' width='640' align='center' valign='center'>";
     echo "<table border='0' cellpadding='0' cellspacing='0'>";
@@ -334,6 +335,15 @@ function plainsearch($strmsg) {
 }
 
 
+function enterebtbox($strmsg) {
+    echo "<tr><td height='295' width='640' align='center' valign='center'>";
+    echo "<table border='0' cellpadding='0' cellspacing='0'>";
+    echo "<td bgcolor='#f04080' height='150' width='260' valign='center' align='center'><center>";
+    echo "<font face='arial' size='-1' color='white'>" . $strmsg;
+    echo "<form action='enter_ebt.php' method='post' autocomplete='off' name='searchform'>";
+    echo "<input Type='text' name='ebt' size='4' maxlen='4' onblur='document.searchform.ebt.focus();'>";
+    echo "</form>press [enter] to cancel</font></center></td></tr></table></td></tr>";
+}
 function membersearchbox($strmsg) {
     echo "<tr><td height='295' width='640' align='center' valign='center'>";
     echo "<table border='0' cellpadding='0' cellspacing='0'>";

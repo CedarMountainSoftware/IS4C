@@ -70,11 +70,11 @@ case when (min(datetime) is null) then 0 else
 end as fsTaxable,
 
 case when (min(datetime) is null) then 0 else
-	sum(CASE WHEN trans_subtype = 'FS' or trans_subtype = 'EF' THEN total ELSE 0 END)
+	sum(CASE WHEN trans_subtype = 'FS' or trans_subtype = 'EF' OR trans_subtype = 'DS' THEN total ELSE 0 END)
 end as fsTENDered,
 
 case when (min(datetime) is null) then 0 else
-	sum(CASE WHEN (foodstamp = 1 or trans_subtype='FS' or trans_subtype='EF') THEN total ELSE 0 END)
+	sum(CASE WHEN (foodstamp = 1 or trans_subtype='FS' or trans_subtype='EF' OR trans_subtype = 'DS') THEN total ELSE 0 END)
 end as fsTotal,
 
 case when (min(datetime) is null) then 0 else

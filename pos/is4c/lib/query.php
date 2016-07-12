@@ -172,6 +172,7 @@
     }
 
     function get_configurations() {
+        $conf_settings = array();
         $query =
             'SELECT `key`,
                 value

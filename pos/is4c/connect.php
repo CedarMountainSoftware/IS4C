@@ -20,6 +20,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 *********************************************************************************/
+
+include_once ("ini/ini.php");
 if (!function_exists("get_config_auto")) {
     include_once("lib/conf.php");
     # apply_configurations();
@@ -145,6 +147,7 @@ function getsubtotals() {
         $_SESSION["memSpecial"] = (double) $row["memSpecial"];
         $_SESSION["staffSpecial"] = (double) $row["staffSpecial"];
         $_SESSION["tenderTotal"] = (double) $row["tenderTotal"];
+error_log("setting percentDiscount to : " . $row['percentDiscount']);
         $_SESSION["percentDiscount"] = (double) $row["percentDiscount"];
         $_SESSION["transDiscount"] = (double) $row["transDiscount"];
         $_SESSION["scDiscount"] = (double) $row["scDiscount"];
@@ -350,7 +353,11 @@ function sql_query($query, $connection)
         $result = mssql_query($query, $connection);
     }
     else {
-        $result = mysql_query($query, $connection) or die(mysql_error());
+	    if(defined('DEVEL_MODE') && DEVEL_MODE){
+		    $result = mysql_query($query, $connection) or die(more_info($query)." Qry: $query  Error:".mysql_error());
+	    }else{
+		    $result = mysql_query($query, $connection) or die(mysql_error());
+	    }
     }
     return $result;
 }

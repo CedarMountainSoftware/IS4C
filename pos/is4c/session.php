@@ -64,11 +64,13 @@ function system_init() {
     $_SESSION["locked"] = 0;
     $_SESSION["lastscale"] = "S";
     $_SESSION["endofshift"] = 0;
+	$_SESSION['dstendered'] = 0;
 }
 
 function transReset() {
     $_SESSION["End"] = 0;
     $_SESSION["memberID"] = "0";
+    $_SESSION["EBT"] = "0";
     $_SESSION["TaxExempt"] = 0;
     $_SESSION["fstaxable"] = 0;
     $_SESSION["fstendered"] = 0;
@@ -122,6 +124,7 @@ function transReset() {
     $_SESSION["unlocked"] = 0;
     $_SESSION["bdaystatus"] = 99;    // 99 = not requested, -1 = invalid, 0 = younger than 21, 1 = 21 and over
     $_SESSION["carded"] = 0;
+	$_SESSION['dstendered'] = 0;
 }
 
 function printReset() {
@@ -134,6 +137,7 @@ function printReset() {
 }
 
 function memberReset() {
+    $_SESSION["EBT"] = "0";
     $_SESSION["memberID"] = "0";
     $_SESSION["isMember"] = 0;
     $_SESSION["isStaff"] = 0;
@@ -148,6 +152,7 @@ function memberReset() {
     $_SESSION["volunteerDiscount"] = 0;
     $_SESSION["togglePatronage"] = 0;            // for patronage refund tracking module     ~joel 2006-12-19
     $_SESSION["trackPatronage"] = 0;            // for patronage refund tracking module     ~joel 2006-12-27
+	$_SESSION['dstendered'] = 0;
 }
 
 function blueLine($row) {

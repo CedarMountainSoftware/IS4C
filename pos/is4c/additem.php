@@ -76,6 +76,8 @@ function addItem($strupc,$strdescription, $strtransType, $strtranssubType, $strt
     $dblItemQtty, $intvolDiscType, $intvolume, $dblVolSpecial, $intmixMatch, $intmatched,
     $intvoided, $intnumflag, $strcharflag){
 
+	error_log("starting addItem");
+
     $dbltotal = str_replace(",", "", $dbltotal);        
     $dbltotal = number_format($dbltotal, 2, '.', '');
     $dblunitPrice = str_replace(",", "", $dblunitPrice);
@@ -158,6 +160,9 @@ function addItem($strupc,$strdescription, $strtransType, $strtranssubType, $strt
             .nullwrap($staff).", "
             ."'".(string) $strCardNo."') ";
 
+	error_log("addItem insert query: " . $strqinsert);
+
+
     sql_query($strqinsert, $db);
     sql_close($db);
 
@@ -181,6 +186,9 @@ function addItem($strupc,$strdescription, $strtransType, $strtranssubType, $strt
     $_SESSION["bdaystatus"] = 99;
     $_SESSION["ccAmtEntered"] = 0;
     $_SESSION["ccAmt"] = 0;
+
+	error_log("finished addItem");
+
 }
 
 //---------------------------------- insert tax line item --------------------------------------

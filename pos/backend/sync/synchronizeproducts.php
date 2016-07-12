@@ -5,9 +5,10 @@
 		$link=mysql_connect($_SESSION["mServer"], $_SESSION["mUser"], $_SESSION["mPass"]);
 		if ($link) {
 			$query='SELECT `synchronizationLog`.`datetime` FROM `is4c_log`.`synchronizationLog` WHERE `synchronizationLog`.`name`=\'products\' AND `synchronizationLog`.`status`=1 ORDER BY `synchronizationLog`.`datetime` DESC LIMIT 1';
-			$result=mysql_query($query, $link);
+//			$result=mysql_query($query, $link);
 
-			if ($result && mysql_num_rows($result)==1) {
+//			if ($result && mysql_num_rows($result)==1) {
+			if (1) {
 				$row=mysql_fetch_array($result);
 		
 				// Grab products from server to synchronize

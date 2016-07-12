@@ -1,5 +1,7 @@
 <?php
+define("DEVEL_MODE", false);
 /*******************************************************************************
+define("DEVEL_MODE", true);
 
     Copyright 2001, 2004 Wedge Community Co-op
 
@@ -25,6 +27,22 @@
 // The "/blah" notation in the function heading indicates the Type of argument that should be given.
 
 
+//appends stack trace to $strmsg. DEVEL_MODE is defined in lib.php
+function more_info(&$strmsg){
+	if(defined('DEVEL_MODE') && DEVEL_MODE){
+		$bt = debug_backtrace(true);
+		$tmp='';
+		for($i=1; $i<count($bt); $i++){
+			$b = $bt[$i];
+			if(preg_match('/\w+.php$/', $b['file'], $m)){
+				$tmp.=$m[0].' ';
+			}
+			$parms = implode(',', $b['args']);
+			$tmp.=$b['line'].' '.$b['function']."($parms)<br/>";
+		}
+		$strmsg.='<div style="all:default;"><pre>'.$tmp.'</pre></div>';
+	}
+}
 // ----------int($num /numeric)----------
 //
 // Given $num, detemine if it is numeric.

@@ -121,6 +121,7 @@
 			// TODO - Validate data before sending to MySQL
 			$link=mysql_connect($_SESSION["mServer"], $_SESSION["mUser"], $_SESSION["mPass"]);
 			if ($link) {
+
 				$query='INSERT `is4c_op`.`products` (`advertised`,`department`,`deposit`,`description`,`discount`,`foodstamp`,`doublesnap`,`alcohol`,`inUse`,`modified`,`normal_price`,`scale`,`size`,`subdept`,`tareweight`,`tax`,`unitofmeasure`,`upc`,`order_number`,`wicable`,`vendor_id`) VALUES (
 		'.((isset($_REQUEST['edit_advertised']) && $_REQUEST['edit_advertised']=='on')?'1':'0').',
 		'.$_REQUEST['edit_department'].',

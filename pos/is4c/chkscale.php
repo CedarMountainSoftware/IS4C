@@ -72,7 +72,7 @@
 
             function listen() {
                 startRequest("rs232/scale");
-                setTimeout("listen();", 70);
+//                setTimeout("listen();", 70);
             }
         <?php
             if ($_SESSION['OS'] == 'linux' && !$_SESSION["browserOnly"])

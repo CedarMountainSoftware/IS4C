@@ -48,7 +48,7 @@ if (!function_exists("discountLastItem")) include("additem.php");
 <?php
     $ls = lockscreen();
 
-	if ($_SESSION['errorBox'])  {
+	if (isset($_SESSION['errorBox']) && strlen($_SESSION['errorBox'])>0)  {
 		boxMsg($_SESSION['errorBox']);
 		$_SESSION['errorBox'] = '';
 		exit;
@@ -354,6 +354,7 @@ if (!function_exists("discountLastItem")) include("additem.php");
                         $_SESSION["training"] = 0;
                         tenderReport();
                         endofShift();
+			session_unset();//gdg 24Jun2016 added to get rid of stale session
                     }
                     break;
                 case "RI":

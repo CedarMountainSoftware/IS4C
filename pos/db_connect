@@ -1,5 +1,5 @@
-database: mysql
+database: opdata
 server: 127.0.0.1
 schemas: opdata
-username: is4clane
-password: is4clane
+username: lane
+password: is4c

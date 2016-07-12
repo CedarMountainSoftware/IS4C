@@ -130,7 +130,7 @@ function setMember($id) {
         if ($_SESSION["percentDiscount"] > 0) {
             discountnotify($_SESSION["percentDiscount"]);
         }
-        sql_query("update localtemptrans set percentDiscount = " . $_SESSION["percentDiscount"] . ", memType = " . $_SESSION["memType"] . ", staff = " . $_SESSION["isStaff"], $conn2);
+        sql_query("update localtemptrans set percentDiscount = " . $_SESSION["percentDiscount"] . ", memType = " . nullwrap($_SESSION["memType"]) . ", staff = " . nullwrap($_SESSION["isStaff"]), $conn2);
     }
 
     if ($_SESSION["discountEnforced"] == 0 && $_SESSION["tenderTotal"] == 0) {
@@ -188,7 +188,7 @@ function checkstatus($num) {
     sql_close($db);
 }
 
-function tender($right, $strl) {
+function tender($right, $strl, $noprint = 0) {
     $tender_upc = "";
     $dollar = $_SESSION["dollarOver"];
 
@@ -213,6 +213,9 @@ function tender($right, $strl) {
     elseif ((($right == "FS") && $strl/100 > ($_SESSION["fsEligible"] + 0.005)) && $_SESSION["refundTotal"] == 0) {
         xboxMsg("EBT food tender cannot exceed eligible amount");
     }
+	elseif ($right == "DS" && $strl / 100 > ( ( $_SESSION['fsEligible'] / 2 ) + 0.005 ) ) {
+	xboxMsg("Discount cannot exceed half of eligible EBT amount.");
+	}
     elseif($right == "EF" && truncate2($strl/100) > $_SESSION["fsEligible"]) {
         xboxMsg("no way!");
     }
@@ -234,7 +237,7 @@ function tender($right, $strl) {
         if ($_SESSION["ttlflag"] == 0) {
             boxMsg("transaction must be totaled before tender can be accepted");
         }
-        elseif (($right == "FS" || $right == "EF") && $_SESSION["fntlflag"] == 0) {
+        elseif (($right == "FS" || $right == "EF" || $right == "DS" ) && $_SESSION["fntlflag"] == 0) {
             boxMsg("eligble amount must be totaled before foodstamp tender can be accepted");
         }
         elseif ($right == "EF" && $_SESSION["fntlflag"] == 1 && $_SESSION["fsEligible"] + 10 <= $strl) {
@@ -311,6 +314,13 @@ function tender($right, $strl) {
 //                }
 //				  else
 				{
+
+		if($tender_code=='DS' && empty($tender_upc) && $_SESSION['EBT']!='0' ){ 
+			//shameless kludge: store EBT number as UPC for Double Snap item
+			error_log("*************************** using EBT as UPC ".$_SESSION['EBT']);
+			$tender_upc=$_SESSION['EBT'];
+		}
+
                     addItem($tender_upc, $tender_desc, "T", $tender_code, "", 0, 0, 0, $unit_price, $tendered, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '');
                     $_SESSION["msgrepeat"] = 0;
                     $_SESSION["TenderType"] = $tender_code;            /***added by apbw 2/1/05 SCR ***/
@@ -337,6 +347,7 @@ function tender($right, $strl) {
                         getsubtotals();
                     }
 
+
                     if ($_SESSION["amtdue"] <= 0.005) {
                         $_SESSION["change"] = -1 * $_SESSION["amtdue"];
                         $cash_return = $_SESSION["change"];
@@ -350,14 +361,34 @@ function tender($right, $strl) {
                             $_SESSION["cashOverAmt"] = 1; // apbw/cvr 3/5/05 cash back beep
                         }
 
+/* gdg 22Jun2016
+Commenting out next two lines does appear to keep the transaction live. The amount due $0.00.
+Can run fntl again.
+*/
                         $_SESSION["End"] = 1;
                         printReceiptfooter();
                     }
                     else {
+			if ($right == "DS") {
+				$_SESSION['dstendered'] += $strl;
+
+    				getsubtotals();
+				$_SESSION["fntlflag"] = 1;
+				setglobalvalue("fntlflag", 1);
+				addItem("", "Foodstamps Remaining Total:", "" , "", "D", 0, 0, 0, truncate2($_SESSION["fsEligible"]), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, '');
+				// sometimes we don't print the items yet if the calling function has more stuff to do first
+				// if $noprint == 1 the lastpage() function should get called later 
+				if (!$noprint)
+
+					lastpage();
+			} else {
+
+
                         $_SESSION["change"] = 0;
                         $_SESSION["fntlflag"] = 0;
                         ttl();
                         lastpage();
+			}
                     }
                 }
             }
@@ -551,8 +582,22 @@ function ttl() {
     // set_error_handler("prehkeys_dataError");
 
     $_SESSION["ttlrequested"] = 1;
+
+if(	$_SESSION['memberID'] == 99999 
+	&& $_SESSION["isMember"] == 0 
+	&& strlen($_SESSION['EBT'])<4 
+	&& $_SESSION['fsEligible'] == 1
+){
+//may need session fsEligible
+	maindisplay("enter_ebt.php");
+    	$_SESSION["repeat"] = 0; //from end of ttl()
+	exit; //don't blow past here
+}
+
     
     if ($_SESSION["memberID"] == "0") {
+	//FNTL membersearch comes from here. Doesn't return here after search though. Goes to memlist.php
+	//and several other files before this ttl() function is called again, but with memberID set.
         maindisplay("memsearch.php");
     }
     else {
@@ -587,10 +632,56 @@ function ttl() {
     
         if ($_SESSION["fntlflag"] == 1) {
             addItem("", "Foodstamps Eligible", "", "", "D", 0, 0, 0, truncate2($_SESSION["fsEligible"]), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, '');
+		$dseligible = getDSDiscountEligible();
+
+		if ($dseligible > 0) {
+			$insert_id = addItem("", "Discount Eligible", "", "", "D", 0, 0, 0, truncate2($dseligible),  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, '');
+			if($insert_id>0){
+        			//$result = sql_query("UPDATE localtemptrans SET ebt='".$_SESSION['EBT']."' WHERE trans_id=".$insert_id." limit 1", $mconn);
+			}
+			tender("DS", $dseligible*100, 1);
+		}
         }
     }
 
     $_SESSION["repeat"] = 0;
+}
+
+function getMaxDSDailyDiscount($card_no){
+	$ret = 20.00; // not sure if this is supposed to come from DB.
+
+	$ds =0;
+	//need backend database since lane db can be cleaned out at end of shift, not end of day.
+	//plus, user might have used a different lane.
+	$db = mDataConnect();
+	
+	if($_SESSION['memberID']==99999 && $_SESSION['isMember']==0){
+	$query = sprintf("SELECT SUM(total) AS todaysum FROM is4c_log.dtransactions ".
+			 "WHERE upc ='%s' AND trans_subtype='DS' AND trans_status !='X' ". 
+			 "AND DATE(`datetime`)=DATE(now())", mysql_real_escape_string($_SESSION["EBT"], $db));
+	}else{
+	$query = sprintf("SELECT SUM(total) AS todaysum FROM is4c_log.dtransactions ".
+			 "WHERE card_no='%s' AND trans_subtype='DS' AND trans_status !='X' ". 
+			 "AND DATE(`datetime`)=DATE(now())", mysql_real_escape_string($_SESSION["memberID"], $db));
+	}
+
+	$result = sql_query($query, $db);
+
+	$num_rows = sql_num_rows($result);
+	if ($num_rows == 1) {
+		$row = sql_fetch_array($result);
+		$ds = abs($row["todaysum"]);
+		error_log("TODAY'S DOUBLE SNAP sum:$ds");
+	}
+	$ret = $ret - $ds;
+	if($ret < 0.0) $ret = 0.0; //don't want to charge for the discount or whatever
+	return $ret;
+}
+
+function getDSDiscountEligible() {
+	$tmp = ($_SESSION['fsEligible'] / 2) - $_SESSION['dstendered'];
+	$tmp = min($tmp, getMaxDSDailyDiscount());//appears to work
+	return $tmp;
 }
 
 function finalttl() {
@@ -615,10 +706,17 @@ function fsEligible() {
     else {
         $_SESSION["fntlflag"] = 1;
         setglobalvalue("fntlflag", 1);
-        if ($_SESSION["ttlflag"] != 1) ttl();
-        else addItem("", "Foodstamps Eligible", "" , "", "D", 0, 0, 0, truncate2($_SESSION["fsEligible"]), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, '');
+        if ($_SESSION["ttlflag"] != 1) {
+		ttl();
+        } else {
+		addItem("", "Foodstamps Eligible", "" , "", "D", 0, 0, 0, truncate2($_SESSION["fsEligible"]), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, '');
+		$dseligible = getDSDiscountEligible();
 
-
+		if ($dseligible > 0)  {
+			addItem("", "Discount Eligible", "", "", "D", 0, 0, 0, truncate2($dseligible),  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, '');
+			tender("DS", $dseligible*100, 1);
+		} 
+	}
         lastpage();
     }
 }
