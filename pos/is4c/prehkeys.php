@@ -716,6 +716,7 @@ function fsEligible() {
 			addItem("", "Discount Eligible", "", "", "D", 0, 0, 0, truncate2($dseligible),  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, '');
 			tender("DS", $dseligible*100, 1);
 		} 
+
 	}
         lastpage();
     }
