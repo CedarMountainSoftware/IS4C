@@ -129,7 +129,6 @@
 					`products`.`specialquantity`=`batchProducts`.`quantity`, */
 					`products`.`start_date`=`batchHeaders`.`start`,
 					`products`.`end_date`=`batchHeaders`.`end`,
-					`products`.`discounttype`=1, 
 					`products`.`modified`=NOW()
 					WHERE 1=1 
 						AND `products`.`upc`=`batchProducts`.`upc` 

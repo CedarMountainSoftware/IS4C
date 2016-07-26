@@ -175,8 +175,7 @@ if (isset($_POST['submitted'])) {
   $data = 'is4c_op';
   
 //  $db = mysql_connect('localhost','root');
-//	$db = mysql_connect("localhost", "backend", "is4cbackend");
-	$db = mysql_connect("localhost", "backend", "is4cpass");
+	$db = mysql_connect("localhost", "backend", "is4cbackend");
   mysql_select_db($data,$db);
   
   /** 
@@ -407,8 +406,7 @@ $(document).ready(function() {
           <tr>';
 //               include('../src/departments.php');
 
-//	$link = mysql_connect("localhost", "backend", "is4cbackend");
-	$link = mysql_connect("localhost", "backend", "is4cpass");
+	$link = mysql_connect("localhost", "backend", "is4cbackend");
 	if (!$link) {
 		echo "couldn't connect to is4c_op.";
 		exit;
