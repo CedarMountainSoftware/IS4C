@@ -85,9 +85,22 @@ function printReceipt($arg1) {
 
                 $receipt .= centerString("---------------------------------------------------") . "\n";
             }
+	    if( trim($_SESSION["memberID"]) == 1 )
+	    {
+		$missedDiscount = $_SESSION["discountableTotal"]*.10;
+		if($missedDiscount > 0)
+		{
+			$receipt .= "\n" . centerString("--------------- YOU COULD HAVE SAVED ---------------") . "\n\n";
+		
+
+			$receipt .= "	      Member Discount: $" . number_format($missedDiscount, 2) . "\n";
+			$receipt .= "     Become a member to enjoy this discount and MORE!!\n\n";
+			$receipt .= centerString("----------------------------------------------------") . "\n";
+		} 
+	    }
             $receipt .= "\n";
     
-            if (trim($_SESSION["memberID"]) != 99999) {            //    mem# 99999 = NON-MEMBER 
+            if (trim($_SESSION["memberID"]) != 1) {            //    mem# 99999 = NON-MEMBER 
                 $receipt .= centerString("Thank You - " . $member) . "\n";
             }
             else {

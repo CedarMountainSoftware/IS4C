@@ -44,7 +44,7 @@
 
             function listen() {
                 startRequest();
-//                setTimeout("listen();", 70);
+                setTimeout("listen();", 70);
             }
 
             listen();

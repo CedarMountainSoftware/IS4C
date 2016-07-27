@@ -56,6 +56,7 @@ else {
         sql_close($db);
     $query2 = "select emp_no, FirstName, LastName from employees where emp_no = " . $_SESSION["CashierNo"] .
         " and (cashierpassword = '" . mysql_escape_string($password) . "' or adminpassword = '" . mysql_escape_string($password) . "')";
+		error_log("mgr query2: $query");
 
         $db2 = pDataConnect();
         $result2 = sql_query($query2, $db2);

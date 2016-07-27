@@ -41,6 +41,7 @@ if (!isset($password) || strlen($password) < 1 || $password == "CL") {
 else {
     $query = "select emp_no, FirstName, LastName from employees where emp_no = " . $_SESSION["CashierNo"] .
         " and (cashierpassword = '" . mysql_escape_string($password) . "' or adminpassword = '" . mysql_escape_string($password) . "')";
+		error_log("mgr query: $query");
 
     $db = pDataConnect();
     $result = sql_query($query, $db);

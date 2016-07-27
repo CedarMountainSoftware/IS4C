@@ -39,7 +39,8 @@ function writeLine($text) {
     if ($_SESSION["print"] != 0) {
 
     $fp = fopen($_SESSION["printerPort"], "w");
-    fwrite($fp, $text);
+    fwrite($fp,$text);//writeLine(chr(27) . chr(33) . chr(5));
+
     fclose($fp);
     }
 }
@@ -79,9 +80,13 @@ function cutreceipt() {
 function printReceiptHeader($dateTimeStamp, $ref) {
     $receipt = ""
         . chr(27) . chr(33) . chr(5)
-        . centerString($_SESSION["receiptHeader1"]) . "\n"
-        . centerString($_SESSION["receiptHeader2"]) . "\n"
-        . centerString($_SESSION["receiptHeader3"]) . "\n"
+	//added by sjg to print the receipt image, commented out the old
+	. chr(29). chr(40). chr(76). chr(6). chr(0). chr(48). chr(69). chr(48). chr(48)
+	. chr(1). chr(1)
+
+//        . centerString($_SESSION["receiptHeader1"]) . "\n"
+//        . centerString($_SESSION["receiptHeader2"]) . "\n"
+//        . centerString($_SESSION["receiptHeader3"]) . "\n"
         . centerString(build_time($dateTimeStamp) . "     " . $ref) . "\n"
         . centerString("Cashier: " . $_SESSION["cashier"]) . "\n"
         . "\n\n";

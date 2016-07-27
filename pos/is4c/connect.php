@@ -21,7 +21,6 @@
 
 *********************************************************************************/
 
-include_once ("ini/ini.php");
 if (!function_exists("get_config_auto")) {
     include_once("lib/conf.php");
     # apply_configurations();
@@ -52,6 +51,10 @@ function tDataConnect()
 
 function pDataConnect()
 {
+	if(defined('DEVEL_MODE') && DEVEL_MODE){
+		error_log("attempting pDatabase connect: " . $_SESSION['pDatabase']);
+	}
+
     $connection = sql_connect("127.0.0.1", $_SESSION["localUser"], $_SESSION["localPass"]);
     sql_select_db($_SESSION["pDatabase"], $connection);
     return $connection;
@@ -165,7 +168,7 @@ error_log("setting percentDiscount to : " . $row['percentDiscount']);
     }
 
     if (isset($_SESSION["memberID"]) && $_SESSION["runningTotal"] > 0) {
-        if ($_SESSION["SSI"] != 0 && ($_SESSION["isStaff"] == 3 || $_SESSION["isStaff"] == 6)) {
+	if ($_SESSION["SSI"] > -6 && ($_SESSION["isStaff"] == 3 || $_SESSION["isStaff"] == 6)) {
             wmdiscount();
         }
     }
@@ -306,7 +309,9 @@ function uploadtable($table) {
     $upload = "mysqldump -u " . $_SESSION['localUser'] . " " . $localpass . " -t " . $_SESSION['tDatabase'] . " " . $table
              . " | mysql -h " . $_SESSION['mServer'] . " -u " . $_SESSION["mUser"] . " " . $serverpass . " " . $_SESSION['mDatabase']." 2>&1";
 
+error_log("uploadtable about to exec: $upload");
     exec($upload, $aResult);
+error_log("finished exec...");
     $error = 0;
     $output = 0;
     foreach ($aResult as $errormsg) {

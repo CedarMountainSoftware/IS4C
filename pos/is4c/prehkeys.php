@@ -1022,6 +1022,9 @@ $total =1000;
 
             $_SESSION["percentDiscount"] = 10;
             $_SESSION["transDiscount"] = $_SESSION["discountableTotal"] * .10;
+	    //rounding error with the discount, trying to round it out here 
+	    //so math later will take care of itself - sjg
+            $_SESSION["transDiscount"] = round($_SESSION["transDiscount"],2,PHP_ROUND_HALF_UP);
         }
     }
 

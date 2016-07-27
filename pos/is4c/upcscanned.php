@@ -25,8 +25,6 @@ if (!function_exists("addItem")) include("additem.php");
 if (!function_exists("couponcode")) include("mcoupon.php");
 
 function upcscanned($entered) {
-error_log("started upcscanned . . .");
-
     $hitareflag = 0;
     $entered = str_replace(".", " ", $entered);
 
@@ -489,7 +487,6 @@ error_log("started upcscanned . . .");
 
     $_SESSION["quantity"] = 0;
     $_SESSION["itemPD"] = 0;
-error_log("fineshed upcscanned . . .");
 
 }
 
