@@ -583,10 +583,10 @@ function ttl() {
 
     $_SESSION["ttlrequested"] = 1;
 
-if(	$_SESSION['memberID'] == 99999 
-	&& $_SESSION["isMember"] == 0 
-	&& strlen($_SESSION['EBT'])<4 
-	&& $_SESSION['fsEligible'] == 1
+if(	$_SESSION['memberID'] == 1
+//	&& $_SESSION["isMember"] == 0 
+//	&& strlen($_SESSION['EBT'])<4 
+//	&& $_SESSION['fsEligible'] == 1
 ){
 //may need session fsEligible
 	maindisplay("enter_ebt.php");
@@ -647,7 +647,7 @@ if(	$_SESSION['memberID'] == 99999
     $_SESSION["repeat"] = 0;
 }
 
-function getMaxDSDailyDiscount($card_no){
+function getMaxDSDailyDiscount(){
 	$ret = 20.00; // not sure if this is supposed to come from DB.
 
 	$ds =0;
@@ -655,10 +655,11 @@ function getMaxDSDailyDiscount($card_no){
 	//plus, user might have used a different lane.
 	$db = mDataConnect();
 	
-	if($_SESSION['memberID']==99999 && $_SESSION['isMember']==0){
+//	if($_SESSION['memberID']==99999 && $_SESSION['isMember']==0){
+	if($_SESSION['memberID']==1 ){
 	$query = sprintf("SELECT SUM(total) AS todaysum FROM is4c_log.dtransactions ".
-			 "WHERE upc ='%s' AND trans_subtype='DS' AND trans_status !='X' ". 
-			 "AND DATE(`datetime`)=DATE(now())", mysql_real_escape_string($_SESSION["EBT"], $db));
+			 "WHERE card_no='%s' AND upc ='%s' AND trans_subtype='DS' AND trans_status !='X' ". 
+			 "AND DATE(`datetime`)=DATE(now())", mysql_real_escape_string($_SESSION["memberID"], $db), mysql_real_escape_string($_SESSION["EBT"], $db));
 	}else{
 	$query = sprintf("SELECT SUM(total) AS todaysum FROM is4c_log.dtransactions ".
 			 "WHERE card_no='%s' AND trans_subtype='DS' AND trans_status !='X' ". 
@@ -679,8 +680,9 @@ function getMaxDSDailyDiscount($card_no){
 }
 
 function getDSDiscountEligible() {
-	$tmp = ($_SESSION['fsEligible'] / 2) - $_SESSION['dstendered'];
+	$tmp = ($_SESSION['fsTotal'] / 2);
 	$tmp = min($tmp, getMaxDSDailyDiscount());//appears to work
+	$tmp = $tmp - $_SESSION['dstendered'];
 	return $tmp;
 }
 

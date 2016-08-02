@@ -121,6 +121,7 @@ function getsubtotals() {
         $_SESSION["transDiscount"] = 0;
         $_SESSION["fsTaxExempt"] = 0;
         $_SESSION["fsEligible"] = 0;
+        $_SESSION["fsTotal"] = 0;
         $_SESSION["ttlflag"] = 0;
         $_SESSION["fntlflag"] = 0;
         $_SESSION["memCouponTTL"] = 0;
@@ -157,6 +158,7 @@ error_log("setting percentDiscount to : " . $row['percentDiscount']);
         $_SESSION["scTaxTotal"] = (double) $row["scTaxTotal"];
         $_SESSION["fsTaxExempt"] = (double) $row["fsTaxExempt"];
         $_SESSION["fsEligible"] = (double) $row["fsEligible"];
+        $_SESSION["fsTotal"] = (double) $row["fsTotal"];
         $_SESSION["memCouponTTL"] = -1 * ((double) $row["couponTotal"]) + ((double) $row["memCoupon"]);
         $_SESSION["refundTotal"] = (double) $row["refundTotal"];
         $_SESSION["chargeTotal"] = (double) $row["chargeTotal"];
