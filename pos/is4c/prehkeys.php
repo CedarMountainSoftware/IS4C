@@ -370,7 +370,8 @@ Can run fntl again.
                     }
                     else {
 			if ($right == "DS") {
-				$_SESSION['dstendered'] += $strl;
+				// dsTendered now comes from the subtotals database view
+//				$_SESSION['dstendered'] += $strl;
 
     				getsubtotals();
 				$_SESSION["fntlflag"] = 1;
@@ -583,16 +584,21 @@ function ttl() {
 
     $_SESSION["ttlrequested"] = 1;
 
-if(	$_SESSION['memberID'] == 1
+	// the co-op has requested the "enter ebt" box be removed for guests
+
+// if(	$_SESSION['memberID'] == 1
+
 //	&& $_SESSION["isMember"] == 0 
 //	&& strlen($_SESSION['EBT'])<4 
 //	&& $_SESSION['fsEligible'] == 1
-){
-//may need session fsEligible
-	maindisplay("enter_ebt.php");
-    	$_SESSION["repeat"] = 0; //from end of ttl()
-	exit; //don't blow past here
-}
+
+
+// ) {
+// may need session fsEligible
+//	maindisplay("enter_ebt.php");
+//   	$_SESSION["repeat"] = 0; //from end of ttl()
+//	exit; //don't blow past here
+// }
 
     
     if ($_SESSION["memberID"] == "0") {
@@ -657,32 +663,57 @@ function getMaxDSDailyDiscount(){
 	
 //	if($_SESSION['memberID']==99999 && $_SESSION['isMember']==0){
 	if($_SESSION['memberID']==1 ){
-	$query = sprintf("SELECT SUM(total) AS todaysum FROM is4c_log.dtransactions ".
-			 "WHERE card_no='%s' AND upc ='%s' AND trans_subtype='DS' AND trans_status !='X' ". 
-			 "AND DATE(`datetime`)=DATE(now())", mysql_real_escape_string($_SESSION["memberID"], $db), mysql_real_escape_string($_SESSION["EBT"], $db));
+
+		// non-members assume each guest is different so no check for previous transactions today
+		$ds = 0;
+
+//	$query = sprintf("SELECT SUM(total) AS todaysum FROM is4c_log.dtransactions ".
+//			 "WHERE card_no='%s' AND upc ='%s' AND trans_subtype='DS' AND trans_status !='X' ". 
+//			 "AND DATE(`datetime`)=DATE(now())", mysql_real_escape_string($_SESSION["memberID"], $db), mysql_real_escape_string($_SESSION["EBT"], $db));
+
+
+
 	}else{
-	$query = sprintf("SELECT SUM(total) AS todaysum FROM is4c_log.dtransactions ".
+		$query = sprintf("SELECT SUM(total) AS todaysum FROM is4c_log.dtransactions ".
 			 "WHERE card_no='%s' AND trans_subtype='DS' AND trans_status !='X' ". 
 			 "AND DATE(`datetime`)=DATE(now())", mysql_real_escape_string($_SESSION["memberID"], $db));
+
+		$result = sql_query($query, $db);
+
+		$num_rows = sql_num_rows($result);
+		if ($num_rows == 1) {
+			$row = sql_fetch_array($result);
+			$ds = abs($row["todaysum"]);
+			error_log("TODAY'S DOUBLE SNAP sum:$ds");
+		}
 	}
 
-	$result = sql_query($query, $db);
-
-	$num_rows = sql_num_rows($result);
-	if ($num_rows == 1) {
-		$row = sql_fetch_array($result);
-		$ds = abs($row["todaysum"]);
-		error_log("TODAY'S DOUBLE SNAP sum:$ds");
-	}
 	$ret = $ret - $ds;
 	if($ret < 0.0) $ret = 0.0; //don't want to charge for the discount or whatever
 	return $ret;
 }
 
 function getDSDiscountEligible() {
-	$tmp = ($_SESSION['fsTotal'] / 2);
+
+	// the amount of match can be up to half of the foodstamp total (including non-DS items)
+	// but the only up to the total of DS marked items
+
+	// so for example, if somebody had a total of $30 FS items
+	// then up to $15 DS marked produce items could be matched
+	// but if they only have $10 in produce then that would be
+	// the discount amount
+
+	$dsmax = $_SESSION['dsTotal'];
+	$fsmax = ($_SESSION['fsTotal'] / 2);
+
+	$tmp = min($fsmax, $dsmax);
+
+
+	// daily limit 
 	$tmp = min($tmp, getMaxDSDailyDiscount());//appears to work
-	$tmp = $tmp - $_SESSION['dstendered'];
+
+	// subtract any discounts that were already tendered
+	$tmp = $tmp - $_SESSION['dsTendered'];
 	return $tmp;
 }
 

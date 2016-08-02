@@ -23,7 +23,9 @@ couponTotal,
 memCoupon,
 0 as madCoupon,
 fsEligible,
+dsTotal,
 fsTotal,
+dsTendered,
 (case when -1 * fsTendered  >= fsTaxable then -1 * fsTax else fsTendered07 end) as fsTaxExempt,
 taxTotal + (case when (fsTendered <> 0 and (-1 * fsTendered)  >= fsTaxable) then (-1 * fsTax) else fsTendered07 end) as taxTotal,
 scTaxTotal,
@@ -35,8 +37,4 @@ scTransDiscount,
 percentDiscount
 
 from lttsubtotals 
-
-
-
-
 

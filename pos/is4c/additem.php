@@ -74,7 +74,7 @@ function addItem($strupc,$strdescription, $strtransType, $strtranssubType, $strt
     $intdepartment,$dblcost, $dblquantity, $dblunitPrice, $dbltotal, $dblregPrice, $intscale,
     $inttax, $intfoodstamp, $dbldiscount, $dblmemDiscount, $intdiscountable, $intdiscounttype, 
     $dblItemQtty, $intvolDiscType, $intvolume, $dblVolSpecial, $intmixMatch, $intmatched,
-    $intvoided, $intnumflag, $strcharflag){
+    $intvoided, $intnumflag, $strcharflag, $doublesnap = 0){
 
 	error_log("starting addItem");
 
@@ -125,7 +125,7 @@ function addItem($strupc,$strdescription, $strtransType, $strtranssubType, $strt
     $strqinsert = "INSERT into localtemptrans (datetime, register_no, emp_no, trans_no, upc, description, trans_type, "
                 ."trans_subtype, trans_status, department, quantity, unitPrice, total, regPrice, scale, tax, "
               ."foodstamp, discount, memDiscount, discountable, discounttype, ItemQtty, volDiscType, volume, "
-              ."VolSpecial, mixMatch, matched, voided, memType, staff, card_no) "
+              ."VolSpecial, mixMatch, matched, voided, memType, staff, card_no, doublesnap) "
               ."values (" 
               
               ."'".$datetimestamp."', "
@@ -158,7 +158,9 @@ function addItem($strupc,$strdescription, $strtransType, $strtranssubType, $strt
               .nullwrap($intvoided).", "
             .nullwrap($memType).", "
             .nullwrap($staff).", "
-            ."'".(string) $strCardNo."') ";
+            ."'".(string) $strCardNo."', " .
+		nullwrap($doublesnap) .
+		") ";
 
 	error_log("addItem insert query: " . $strqinsert);
 

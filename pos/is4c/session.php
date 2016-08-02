@@ -64,7 +64,6 @@ function system_init() {
     $_SESSION["locked"] = 0;
     $_SESSION["lastscale"] = "S";
     $_SESSION["endofshift"] = 0;
-	$_SESSION['dstendered'] = 0;
 }
 
 function transReset() {
@@ -124,7 +123,6 @@ function transReset() {
     $_SESSION["unlocked"] = 0;
     $_SESSION["bdaystatus"] = 99;    // 99 = not requested, -1 = invalid, 0 = younger than 21, 1 = 21 and over
     $_SESSION["carded"] = 0;
-	$_SESSION['dstendered'] = 0;
 }
 
 function printReset() {
@@ -152,7 +150,6 @@ function memberReset() {
     $_SESSION["volunteerDiscount"] = 0;
     $_SESSION["togglePatronage"] = 0;            // for patronage refund tracking module     ~joel 2006-12-19
     $_SESSION["trackPatronage"] = 0;            // for patronage refund tracking module     ~joel 2006-12-27
-	$_SESSION['dstendered'] = 0;
 }
 
 function blueLine($row) {

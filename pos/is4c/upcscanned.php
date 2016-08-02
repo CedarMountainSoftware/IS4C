@@ -93,6 +93,8 @@ function upcscanned($entered) {
 
     $dept = $row["department"];
 
+    $doublesnap = $row['doublesnap'];
+
     if ($num_rows == 0 && substr($upc, 0, 3) != "005") {
         $fconn = tDataconnect();
         $datetimestamp = strftime("%Y-%m-%d %H:%M:%S %p", time());
@@ -350,13 +352,13 @@ function upcscanned($entered) {
                 $quantity = $quantity % $volume;
 
                 if ($newmm >= 1) {
-                    addItem($upc, $description, "I", "", "", $department, $cost, $newmm, truncate2($VolSpecial), truncate2($newmm * $VolSpecial), truncate2($VolSpecial), $scale, $tax, $foodstamp, $discount, $memDiscount, $discountable, $discounttype, $volume * $newmm, $volDiscType, $volume, $VolSpecial, $mixMatch, $volume * $newmm, 0, 0, '');
+                    addItem($upc, $description, "I", "", "", $department, $cost, $newmm, truncate2($VolSpecial), truncate2($newmm * $VolSpecial), truncate2($VolSpecial), $scale, $tax, $foodstamp, $discount, $memDiscount, $discountable, $discounttype, $volume * $newmm, $volDiscType, $volume, $VolSpecial, $mixMatch, $volume * $newmm, 0, 0, '', $doublesnap);
                     $newmm = 0;
                     $_SESSION["qttyvalid"] = 0;
                 }
 
                 if ($newmmtotal >= $volume) {
-                    addItem($upc, $description, "I", "", "", $department, $cost, 1, $voladj, $voladj, $voladj, $scale, $tax, $foodstamp, $discount, $memDiscount, $discountable, $discounttype, 1, $volDiscType, $volume, $VolSpecial, $mixMatch, $volume, 0, 0, '');
+                    addItem($upc, $description, "I", "", "", $department, $cost, 1, $voladj, $voladj, $voladj, $scale, $tax, $foodstamp, $discount, $memDiscount, $discountable, $discounttype, 1, $volDiscType, $volume, $VolSpecial, $mixMatch, $volume, 0, 0, '', $doublesnap);
                     $quantity = $quantity - 1;
                     $newmmtotal = 0;
                     $_SESSION["qttyvalid"] = 0;
@@ -427,7 +429,7 @@ function upcscanned($entered) {
                         $intvoided = 0;
                     }
 
-                    addItem($upc, $description, "I", " ", " ", $department, $cost, $quantity, $unitPrice, $total, $regPrice, $scale, $tax, $foodstamp, $discount, $memDiscount, $discountable, $discounttype, $qtty, $volDiscType, $volume, $VolSpecial, $mixMatch, $matched, $intvoided, 0, '');
+                    addItem($upc, $description, "I", " ", " ", $department, $cost, $quantity, $unitPrice, $total, $regPrice, $scale, $tax, $foodstamp, $discount, $memDiscount, $discountable, $discounttype, $qtty, $volDiscType, $volume, $VolSpecial, $mixMatch, $matched, $intvoided, 0, '', $doublesnap);
                     $_SESSION["msgrepeat"] = 0;
                     $_SESSION["qttyvalid"] = 0;
                 }

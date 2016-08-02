@@ -74,8 +74,16 @@ case when (min(datetime) is null) then 0 else
 end as fsTENDered,
 
 case when (min(datetime) is null) then 0 else
+	sum(CASE WHEN trans_subtype = 'DS' then total else 0 END)
+end as dsTendered,
+
+case when (min(datetime) is null) then 0 else
 	sum(CASE WHEN (foodstamp = 1 or trans_subtype='FS' or trans_subtype='EF' OR trans_subtype = 'DS') THEN total ELSE 0 END)
 end as fsTotal,
+
+case when (min(datetime) is null) then 0 else
+	sum(CASE WHEN (doublesnap = 1) THEN total ELSE 0 END)
+end as dsItems,
 
 case when (min(datetime) is null) then 0 else
 	sum(CASE WHEN foodstamp = 1 THEN total ELSE 0 END)

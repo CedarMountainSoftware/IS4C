@@ -91,6 +91,7 @@ function voidid($item_num) {
     $discountable = $row["discountable"];
     $unitPrice = $row["unitPrice"];
     $scale = nullwrap($row["scale"]);
+    $doublesnap = $row['doublesnap'];
 
     if ($row["foodstamp"] != 0) {
         $foodstamp = 1;
@@ -110,7 +111,7 @@ function voidid($item_num) {
     else {
         $update = "update localtemptrans set voided = 1 where trans_id = " . $item_num;
         sql_query($update, $db);
-        addItem($upc, $row["description"], $row["trans_type"], $row["trans_subtype"], "V", $row["department"], $cost, $quantity, $unitPrice, $total, $row["regPrice"], $scale, $row["tax"], $foodstamp, $discount, $memDiscount, $discountable, $discounttype, $quantity, $row["volDiscType"], $row["volume"], $VolSpecial, 0, 0, 1, 0, '');
+        addItem($upc, $row["description"], $row["trans_type"], $row["trans_subtype"], "V", $row["department"], $cost, $quantity, $unitPrice, $total, $row["regPrice"], $scale, $row["tax"], $foodstamp, $discount, $memDiscount, $discountable, $discounttype, $quantity, $row["volDiscType"], $row["volume"], $VolSpecial, 0, 0, 1, 0, '', $doublesnap);
 
         if ($row["trans_type"] != "T" && $row['trans_type'] != "A") {
             $_SESSION["ttlflag"] = 0;
@@ -280,6 +281,7 @@ function voidupc($upc, $lastpageflag = 1) {
                 $discount = -1 * $row["discount"];
                 $memDiscount = -1 * $row["memDiscount"];
                 $discountable = $row["discountable"];
+		$doublesnap = $row['doublesnap'];
                 $cost = 0;
 
                 if ($_SESSION["ddNotify"] == 1) {
@@ -339,12 +341,12 @@ function voidupc($upc, $lastpageflag = 1) {
                     }
     
                     if ($volmulti > 0) {
-                        addItem($upc, $row["description"], $row["trans_type"], $row["trans_subtype"], "V", $row["department"], $cost, -1* $volmulti, $VolSpecial, -1 * $volmulti * $VolSpecial, $VolSpecial, 0, $row["tax"], $foodstamp, $discount, $memDiscount, $discountable, $discounttype, -1 * $volmulti * $volume, $volDiscType, $volume, $VolSpecial, $mixMatch, -1 * $volume * $volmulti, 1, 0, '');
+                        addItem($upc, $row["description"], $row["trans_type"], $row["trans_subtype"], "V", $row["department"], $cost, -1* $volmulti, $VolSpecial, -1 * $volmulti * $VolSpecial, $VolSpecial, 0, $row["tax"], $foodstamp, $discount, $memDiscount, $discountable, $discounttype, -1 * $volmulti * $volume, $volDiscType, $volume, $VolSpecial, $mixMatch, -1 * $volume * $volmulti, 1, 0, '', $doublesnap);
                         $quantity = $vmremainder;
                     }
                     if ($vmremainder > $mmremainder) {
                         $voladj = $row["VolSpecial"] - ($unitPrice * ($volume - 1));
-                        addItem($upc, $row["description"], $row["trans_type"], $row["trans_subtype"], "V", $row["department"], $cost, -1, $voladj, -1 * $voladj, $voladj, 0, $row["tax"], $foodstamp, $discount, $memDiscount, $discountable, $discounttype, -1, $volDiscType, $volume, $VolSpecial, $mixMatch, -1 * $volume, 1, 0, '');
+                        addItem($upc, $row["description"], $row["trans_type"], $row["trans_subtype"], "V", $row["department"], $cost, -1, $voladj, -1 * $voladj, $voladj, 0, $row["tax"], $foodstamp, $discount, $memDiscount, $discountable, $discounttype, -1, $volDiscType, $volume, $VolSpecial, $mixMatch, -1 * $volume, 1, 0, '', $doublesnap);
                         $quantity = $quantity - 1;
                     }
                 }
@@ -369,7 +371,7 @@ function voidupc($upc, $lastpageflag = 1) {
                     $lastpageflag = 0;
                 }
                 elseif ($quantity != 0) {
-                    addItem($upc, $row["description"], $row["trans_type"], $row["trans_subtype"], "V", $row["department"], $cost, $quantity, $unitPrice, $total, $row["regPrice"], $scale, $row["tax"], $foodstamp, $discount, $memDiscount, $discountable, $discounttype, $quantity, $volDiscType, $volume, $VolSpecial, $mixMatch, 0, 1, 0, '');
+                    addItem($upc, $row["description"], $row["trans_type"], $row["trans_subtype"], "V", $row["department"], $cost, $quantity, $unitPrice, $total, $row["regPrice"], $scale, $row["tax"], $foodstamp, $discount, $memDiscount, $discountable, $discounttype, $quantity, $volDiscType, $volume, $VolSpecial, $mixMatch, 0, 1, 0, '', $doublesnap);
                     if ($row["trans_type"] != "T") {
                         $_SESSION["ttlflag"] = 0;
                         $_SESSION["ttlrequested"] = 0;
