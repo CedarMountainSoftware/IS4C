@@ -34,5 +34,6 @@ CREATE TABLE `localtrans` (
   `memType` tinyint(4) default NULL,
   `staff` tinyint(4) default 0,
   `card_no` varchar(255) default NULL,
-  `trans_id` int(11) default NULL
+  `trans_id` int(11) default NULL,
+  `doublesnap` boolean default 0
 )

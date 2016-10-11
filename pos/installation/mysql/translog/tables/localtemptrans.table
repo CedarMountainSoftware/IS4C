@@ -35,5 +35,6 @@ CREATE TABLE `localtemptrans` (
   `staff` tinyint(4) default 0,
   `card_no` varchar(255) default NULL,
   `trans_id` int(11) NOT NULL auto_increment,
+  `doublesnap` boolean default false,
   PRIMARY KEY  (`trans_id`)
 )
