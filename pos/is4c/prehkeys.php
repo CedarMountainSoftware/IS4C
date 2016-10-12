@@ -325,6 +325,21 @@ function tender($right, $strl, $noprint = 0) {
                     $_SESSION["msgrepeat"] = 0;
                     $_SESSION["TenderType"] = $tender_code;            /***added by apbw 2/1/05 SCR ***/
 
+
+
+			// if there was a DS Discount already applied, and the EBT tender was less than the full amount...
+			// adjust the DS discount down to match the EBT amount tendered
+			if ($right == "FS" &&
+				abs($unit_price) < $_SESSION["fsEligible"]  &&
+				abs($_SESSION['dsTendered']) > abs($unit_price) 
+				) {
+				$dsadjust = ($_SESSION['dsTendered'] - $unit_price) * -1;
+				addItem("", "DoubleSnap Adjust", "T", "DS", "", 0, 0, 0, $dsadjust, $dsadjust, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '');
+			}
+			
+
+
+
                     /*** session tender type set by apbw 2/28/05 ***/
                     if ($_SESSION["TenderType"] == "MI" || $_SESSION["TenderType"] == "CX") {
                         $_SESSION["chargetender"] = 1;                            // apbw 2/28/05 SCR
@@ -579,7 +594,7 @@ function deptkey($price, $dept, $byweight = 0) {
 }
 
 // re-wrote the queries to resolve insert statement errors -- apbw 7/01/05
-function ttl() {
+function ttl($voided = 0) {
     // set_error_handler("prehkeys_dataError");
 
     $_SESSION["ttlrequested"] = 1;
@@ -636,7 +651,7 @@ function ttl() {
 
         addItem("", "Subtotal " . truncate2($_SESSION["subtotal"]) . ", Tax ".truncate2($_SESSION["taxTotal"]), "C", "", "D", 0, 0, 0, $amtDue, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, '');
     
-        if ($_SESSION["fntlflag"] == 1) {
+        if ($_SESSION["fntlflag"] == 1 && !$voided) {
             addItem("", "Foodstamps Eligible", "", "", "D", 0, 0, 0, truncate2($_SESSION["fsEligible"]), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, '');
 		$dseligible = getDSDiscountEligible();
 
@@ -713,7 +728,8 @@ function getDSDiscountEligible() {
 	$tmp = min($tmp, getMaxDSDailyDiscount());//appears to work
 
 	// subtract any discounts that were already tendered
-	$tmp = $tmp - $_SESSION['dsTendered'];
+	// dsTendered will be negative so we add it
+	$tmp = $tmp + $_SESSION['dsTendered'];
 	return $tmp;
 }
 
