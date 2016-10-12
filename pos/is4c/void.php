@@ -117,7 +117,7 @@ function voidid($item_num) {
             $_SESSION["ttlflag"] = 0;
             $_SESSION["ttlrequested"] = 0;
         }
-        else ttl();
+        else ttl(1);
 
         lastpage();
     }
