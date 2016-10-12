@@ -34,5 +34,6 @@ CREATE TABLE `dtransactions` (
   `staff` tinyint(4) default NULL,
   `card_no` varchar(255) default NULL,
   `trans_id` int(11) default NULL,
+  `doublesnap` boolean default 0,
   KEY `trans_id` (`trans_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
