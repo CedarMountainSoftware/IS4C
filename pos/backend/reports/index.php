@@ -19,6 +19,7 @@
 			<h1>Reports</h1>
 			<ul>
 				<li><a href="prodsales.php">Product Sales Report</a></li>
+				<li><a href="dsreport.php">DoubleSnap Report</a></li>
 				<li><a href="custitems.php">Custom Items Report</a> --- (<a href="../admin/custcategories.php">Edit Custom Categories</a>)</li>
 
 				<li><a href="activeitems.php">Active Items</a></li>
