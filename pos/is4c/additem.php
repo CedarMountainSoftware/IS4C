@@ -247,7 +247,7 @@ function discountLastItem($percent) {
 	if ($row = mysql_fetch_assoc($res)) {
 		$last_id = $row['last_id'];
 		if ($last_id > 0) {
-			$chkquery = "SELECT description, total, department, upc FROM localtemptrans WHERE trans_id = $last_id";
+			$chkquery = "SELECT description, total, department, upc, foodstamp, doublesnap FROM localtemptrans WHERE trans_id = $last_id";
 			$res2 = sql_query($chkquery, $db);
 
 			if ($row2 = mysql_fetch_assoc($res2)) {
@@ -255,6 +255,8 @@ function discountLastItem($percent) {
 				$itemdesc = $row2['description'];
 				$discountAmt = $row2['total'] * ($percent / 100);
 				$department = $row2['department'];
+				$foodstamp = $row2['foodstamp'];
+				$doublesnap = $row2['doublesnap'];
 				$errors = 0;
 
 			} else {
@@ -272,7 +274,7 @@ function discountLastItem($percent) {
 	if (!$errors) {
 
 		// add a line item to discount the specified percentage
-		addItem("DISCOUNT", "** $percent% Item Discount ** [$itemupc] $itemdesc", "I", "ID", "", $department, 0, 1, truncate2(-1 * $discountAmt), truncate2(-1 * $discountAmt), 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 25, 0, '');
+		addItem("DISCOUNT", "** $percent% Item Discount ** [$itemupc] $itemdesc", "I", "ID", "", $department, 0, 1, truncate2(-1 * $discountAmt), truncate2(-1 * $discountAmt), 0, 0, 0, $foodstamp, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 25, 0, '', $doublesnap);
 		lastpage();
 	} else {
 		boxMsg("Error processing discount");
