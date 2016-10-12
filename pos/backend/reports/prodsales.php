@@ -25,6 +25,8 @@ require_once('../src/formlib.inc');
 require_once('../src/htmlparts.php');
 require_once('../src/misc.inc');
 
+require_once($_SERVER["DOCUMENT_ROOT"]."/define.conf");
+
 $page_title = "Reporting";
 $header = "Product Sales Report";
 // include ('../src/header.html');
@@ -70,7 +72,7 @@ if (isset($_POST['submit'])) {
 
 	$csvdata = array();
 
-	$link = mysql_connect("localhost", "backend", "is4cbackend");
+	$link = mysql_connect($_SESSION["mServer"], $_SESSION["mUser"], $_SESSION["mPass"]);
 	if (!$link) {
 		echo "couldn't connect to is4c_log.";
 		exit;
